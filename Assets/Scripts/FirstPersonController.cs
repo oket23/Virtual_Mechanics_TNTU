@@ -15,8 +15,10 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+        Screen.fullScreen = true;
+
         characterController = GetComponent<CharacterController>();
-        
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

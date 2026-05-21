@@ -58,3 +58,5 @@ Desktop.ini
 *.aab
 *.unitypackage
 *.app
+*.zip
+.vsconfig
