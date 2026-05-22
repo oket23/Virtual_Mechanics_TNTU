@@ -21,8 +21,11 @@ public abstract class LabExperimentBase
     }
 
     public bool IsComplete => measurements.Count >= data.measurementCount;
-    public int CurrentCount => measurements.Count;
-    public int TotalCount => data.measurementCount;
+    public int CurrentCount  => measurements.Count;
+    public int MeasuredCount => measurements.Count;
+    public int TotalCount    => data.measurementCount;
+    public float GetGenerated(int i)   => generated[i];
+    public float GetMeasurement(int i) => measurements[i];
 
     // Точка розширення: вкажи свої формули в класі-нащадку
     public abstract LabResults Calculate();

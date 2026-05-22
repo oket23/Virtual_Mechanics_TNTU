@@ -60,3 +60,5 @@ Desktop.ini
 *.app
 *.zip
 .vsconfig
+web-build
+/web-build

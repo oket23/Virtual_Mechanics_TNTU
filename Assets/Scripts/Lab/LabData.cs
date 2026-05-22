@@ -16,4 +16,10 @@ public class LabData : ScriptableObject
     public float spread = 0.5f;
     public int measurementCount = 5;
     public string unit = "м";
+
+    [Header("Підказки для студентів")]
+    public string formula = "";
+    [TextArea(2, 5)]
+    public string hints = "";
+    public string externalUrl = "";
 }

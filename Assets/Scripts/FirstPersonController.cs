@@ -40,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            moveDirection.y = -0.5f; 
+            moveDirection.y = -0.5f;
         }
 
         characterController.Move(moveDirection * Time.deltaTime);

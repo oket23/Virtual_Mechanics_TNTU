@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// Керує попапом лабораторної роботи.
 // Стани: MainMenu → Info / Experiment → Results
 public class LabPopupController : MonoBehaviour
 {
@@ -21,16 +20,26 @@ public class LabPopupController : MonoBehaviour
     public GameObject infoPanel;
     public TMP_Text   descText;
     public Button     infoBackBtn;
+    public Button     linkBtn;
 
     [Header("Вимірювання")]
-    public GameObject    experimentPanel;
-    public TMP_Text      progressText;
-    public TMP_Text      measuredValueText;
+    public GameObject     experimentPanel;
+    public TMP_Text       progressText;
+    public TMP_Text       measuredValueText;
     public TMP_InputField inputField;
-    public Button        measureBtn;
-    public Button        saveBtn;
-    public Button        checkBtn;
-    public Button        experimentBackBtn;
+    public Button         measureBtn;
+    public Button         saveBtn;
+    public Button         checkBtn;
+    public Button         experimentBackBtn;
+
+    [Header("Ліва панель вимірювань")]
+    public TMP_Text expNameText;
+    public TMP_Text expDescText;
+    public TMP_Text expFormulaText;
+    public TMP_Text expHintsText;
+
+    [Header("Жива таблиця")]
+    public TMP_Text liveTableText;
 
     [Header("Результати")]
     public GameObject resultsPanel;
@@ -50,14 +59,14 @@ public class LabPopupController : MonoBehaviour
         if (closeBtn) closeBtn.onClick.AddListener(Close);
 
         if (infoBackBtn) infoBackBtn.onClick.AddListener(() => SetPanel(mainPanel));
+        if (linkBtn)     linkBtn.onClick.AddListener(OpenLink);
 
         if (measureBtn)        measureBtn.onClick.AddListener(DoMeasure);
         if (saveBtn)           saveBtn.onClick.AddListener(SaveMeasurement);
         if (checkBtn)          checkBtn.onClick.AddListener(ShowResults);
         if (experimentBackBtn) experimentBackBtn.onClick.AddListener(() => { ResetExperiment(); SetPanel(mainPanel); });
 
-        if (inputField) inputField.onValueChanged.AddListener(_ => RefreshSaveBtn());
-
+        if (inputField)    inputField.onValueChanged.AddListener(_ => RefreshSaveBtn());
         if (resultsBackBtn) resultsBackBtn.onClick.AddListener(() => { ResetExperiment(); SetPanel(mainPanel); });
     }
 
@@ -67,7 +76,18 @@ public class LabPopupController : MonoBehaviour
     {
         currentData = data;
         ResetExperiment();
+
         nameText.text = currentData.instrumentName;
+        descText.text = currentData.description;
+
+        if (expNameText)    expNameText.text    = currentData.instrumentName;
+        if (expDescText)    expDescText.text    = currentData.description;
+        if (expFormulaText) expFormulaText.text = currentData.formula;
+        if (expHintsText)   expHintsText.text   = currentData.hints;
+
+        if (linkBtn)
+            linkBtn.gameObject.SetActive(!string.IsNullOrEmpty(currentData.externalUrl));
+
         SetPanel(mainPanel);
     }
 
@@ -81,11 +101,11 @@ public class LabPopupController : MonoBehaviour
 
     void RefreshExperimentUI()
     {
-        progressText.text = $"Вимір {experiment.CurrentCount + 1} з {experiment.TotalCount}";
+        progressText.text      = $"Вимір {experiment.CurrentCount + 1} з {experiment.TotalCount}";
         measuredValueText.text = "—";
-        inputField.text = "";
+        inputField.text        = "";
         inputField.gameObject.SetActive(true);
-        hasMeasured = false;
+        hasMeasured          = false;
         saveBtn.interactable = false;
         saveBtn.gameObject.SetActive(true);
         measureBtn.gameObject.SetActive(true);
@@ -94,10 +114,10 @@ public class LabPopupController : MonoBehaviour
 
     void DoMeasure()
     {
-        lastGenerated = experiment.GenerateMeasurement();
+        lastGenerated          = experiment.GenerateMeasurement();
         measuredValueText.text = $"{lastGenerated:F3} {currentData.unit}";
-        hasMeasured = true;
-        inputField.text = "";
+        hasMeasured            = true;
+        inputField.text        = "";
         inputField.Select();
         RefreshSaveBtn();
     }
@@ -112,6 +132,7 @@ public class LabPopupController : MonoBehaviour
             return;
 
         experiment.AddMeasurementPair(lastGenerated, val);
+        RefreshLiveTable();
 
         if (experiment.IsComplete)
         {
@@ -131,7 +152,6 @@ public class LabPopupController : MonoBehaviour
     void ShowResults()
     {
         SetPanel(resultsPanel);
-
         LabResults r = experiment.Calculate();
 
         var sb = new StringBuilder();
@@ -140,21 +160,41 @@ public class LabPopupController : MonoBehaviour
         for (int i = 0; i < r.Measurements.Count; i++)
             sb.AppendLine($"{i + 1,-4} {r.Generated[i],-18:F3} {r.Measurements[i],-14:F3} {r.Deviations[i],-12:F3}");
 
-        tableText.text = sb.ToString();
-        summaryText.text =
-            $"Середнє: {r.Mean:F3} {r.Unit}      Похибка: ±{r.Uncertainty:F3} {r.Unit}";
+        tableText.text   = sb.ToString();
+        summaryText.text = $"Середнє: {r.Mean:F3} {r.Unit}      Похибка: ±{r.Uncertainty:F3} {r.Unit}";
     }
 
     void Close()
     {
         gameObject.SetActive(false);
-        if (uiManager != null)
-            uiManager.CloseMenu();
+        if (uiManager != null) uiManager.CloseMenu();
     }
 
     // ── Хелпери ──────────────────────────────────────────────────────────────
 
-    void ResetExperiment() => experiment = new DefaultLabExperiment(currentData);
+    void ResetExperiment()
+    {
+        experiment = new DefaultLabExperiment(currentData);
+        if (liveTableText != null)
+            liveTableText.text = "Результати з'являться після першого запису...";
+    }
+
+    void RefreshLiveTable()
+    {
+        if (liveTableText == null) return;
+        var sb = new StringBuilder();
+        sb.AppendLine($"{"№",-3} {"Показ приладу",-14} {"Записано",-10}");
+        sb.AppendLine(new string('─', 28));
+        for (int i = 0; i < experiment.MeasuredCount; i++)
+            sb.AppendLine($"{i + 1,-3} {experiment.GetGenerated(i),-14:F3} {experiment.GetMeasurement(i),-10:F3}");
+        liveTableText.text = sb.ToString();
+    }
+
+    void OpenLink()
+    {
+        if (currentData != null && !string.IsNullOrEmpty(currentData.externalUrl))
+            Application.OpenURL(currentData.externalUrl);
+    }
 
     void RefreshSaveBtn() =>
         saveBtn.interactable = hasMeasured && !string.IsNullOrWhiteSpace(inputField.text);

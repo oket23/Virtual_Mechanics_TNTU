@@ -135,9 +135,12 @@ public static class LabPopupBootstrap
 
         ctrl.descText = Txt(root, "DescText", "", 19,
                             TextAlignmentOptions.TopLeft, 0, expand: true, color: TEXT_WHITE);
-        Space(root, 10);
+        Space(root, 8);
         Divider(root);
-        Space(root, 10);
+        Space(root, 8);
+        ctrl.linkBtn = BtnH(root, "BtnLink", "Відкрити посилання >>", BTN_TEAL, 46, 17);
+        ctrl.linkBtn.gameObject.SetActive(false);
+        Space(root, 6);
         ctrl.infoBackBtn = BtnH(root, "BtnBack", "<< Назад", BTN_GREY, 46, 18);
         return root;
     }
@@ -150,34 +153,68 @@ public static class LabPopupBootstrap
 
         Header(root, "ВИКОНАННЯ ВИМІРЮВАНЬ");
         Divider(root);
-        Space(root, 10);
 
-        ctrl.progressText = Txt(root, "ProgressText", "Вимір 1 з 5", 19,
-                                TextAlignmentOptions.Center, 28, color: TEXT_DIM);
-        Space(root, 6);
+        // Flexible рядок: ліва інфо-панель + права панель вимірювань
+        var contentRow = Go(root, "ContentRow");
+        contentRow.AddComponent<LayoutElement>().flexibleHeight = 1;
+        var hlg = contentRow.AddComponent<HorizontalLayoutGroup>();
+        hlg.spacing              = 2;
+        hlg.childControlWidth    = true;
+        hlg.childControlHeight   = true;
+        hlg.childForceExpandWidth  = true;
+        hlg.childForceExpandHeight = true;
 
-        var valBox = Box(root, "ValBox", new Color(0.08f, 0.10f, 0.16f, 1f), 72);
-        ctrl.measuredValueText = Txt(valBox, "MeasuredValue", "—", 38,
-                                     TextAlignmentOptions.Center, 0, expand: true,
-                                     color: TEXT_ACCENT);
+        // ── Ліва панель: назва, опис, формула, підказки ──
+        var left = VSubPanel(contentRow, "LeftInfo", 38f, BG_HEADER);
+        ctrl.expNameText = Txt(left, "ExpName", "", 16, TextAlignmentOptions.Left, 24, color: TEXT_ACCENT);
+        ctrl.expNameText.fontStyle = FontStyles.Bold;
+        Space(left, 4);
+        Divider(left);
+        Space(left, 5);
+        Txt(left, "DescLabel", "Опис:", 13, TextAlignmentOptions.Left, 18, color: TEXT_DIM);
+        Space(left, 3);
+        ctrl.expDescText = Txt(left, "ExpDesc", "", 13, TextAlignmentOptions.TopLeft,
+                               0, expand: true, color: TEXT_WHITE);
+        Space(left, 5);
+        Divider(left);
+        Space(left, 5);
+        ctrl.expFormulaText = Txt(left, "ExpFormula", "", 14, TextAlignmentOptions.Center,
+                                  34, color: TEXT_ACCENT);
+        Space(left, 4);
+        ctrl.expHintsText = Txt(left, "ExpHints", "", 12, TextAlignmentOptions.TopLeft,
+                                0, expand: true, color: TEXT_DIM);
 
-        Space(root, 10);
-        Txt(root, "InputLabel", "Введіть прочитане значення:", 17,
-            TextAlignmentOptions.Center, 22, color: TEXT_DIM);
-        Space(root, 4);
-        ctrl.inputField = MakeInput(root, "InputField", "0.000", 50);
-        Space(root, 12);
+        // ── Права панель: жива таблиця + елементи вимірювання ──
+        var right = VSubPanel(contentRow, "RightPanel", 62f, BG_PANEL);
 
-        var row = HRow(root, "BtnRow", 54);
-        ctrl.measureBtn = Btn(row, "BtnMeasure", "Зробити вимір", BTN_BLUE,  18);
-        ctrl.saveBtn    = Btn(row, "BtnSave",    "Записати",      BTN_GREEN, 18);
+        var liveBox = Box(right, "LiveTableBox", new Color(0.07f, 0.09f, 0.14f, 1f), 0, expand: true);
+        ctrl.liveTableText = Txt(liveBox, "LiveTable",
+            "Результати з'являться після першого запису...", 13,
+            TextAlignmentOptions.TopLeft, 0, expand: true, color: TEXT_WHITE);
 
-        Space(root, 8);
-        ctrl.checkBtn = BtnH(root, "BtnCheck", "Переглянути результати >>", BTN_TEAL, 50, 18);
+        Divider(right);
+        Space(right, 4);
+        ctrl.progressText = Txt(right, "ProgressText", "Вимір 1 з 5", 15,
+                                TextAlignmentOptions.Center, 22, color: TEXT_DIM);
+        Space(right, 3);
+        var valBox = Box(right, "ValBox", new Color(0.08f, 0.10f, 0.16f, 1f), 50);
+        ctrl.measuredValueText = Txt(valBox, "MeasuredValue", "—", 28,
+                                     TextAlignmentOptions.Center, 0, expand: true, color: TEXT_ACCENT);
+        Space(right, 4);
+        Txt(right, "InputLabel", "Введіть прочитане значення:", 14,
+            TextAlignmentOptions.Center, 18, color: TEXT_DIM);
+        Space(right, 3);
+        ctrl.inputField = MakeInput(right, "InputField", "0.000", 40);
+        Space(right, 6);
+        var btnRow = HRow(right, "BtnRow", 40);
+        ctrl.measureBtn = Btn(btnRow, "BtnMeasure", "Зробити вимір", BTN_BLUE,  15);
+        ctrl.saveBtn    = Btn(btnRow, "BtnSave",    "Записати",      BTN_GREEN, 15);
+        Space(right, 3);
+        ctrl.checkBtn = BtnH(right, "BtnCheck", "Переглянути результати >>", BTN_TEAL, 36, 14);
         ctrl.checkBtn.gameObject.SetActive(false);
 
-        Space(root, 6);
-        ctrl.experimentBackBtn = BtnH(root, "BtnBack", "<< Назад", BTN_GREY, 44, 17);
+        Space(root, 4);
+        ctrl.experimentBackBtn = BtnH(root, "BtnBack", "<< Назад", BTN_GREY, 38, 15);
         return root;
     }
 
@@ -285,6 +322,24 @@ public static class LabPopupBootstrap
         hlg.childControlHeight   = true;
         hlg.childForceExpandWidth  = true;
         hlg.childForceExpandHeight = true;
+        return go;
+    }
+
+    // Вертикальна під-панель всередині HorizontalLayoutGroup
+    static GameObject VSubPanel(GameObject parent, string name, float flexW, Color? bg = null)
+    {
+        var go = Go(parent, name);
+        var le = go.AddComponent<LayoutElement>();
+        le.flexibleWidth = flexW;
+        if (bg.HasValue) go.AddComponent<Image>().color = bg.Value;
+        var v = go.AddComponent<VerticalLayoutGroup>();
+        v.padding              = new RectOffset(10, 10, 8, 8);
+        v.spacing              = 0;
+        v.childAlignment       = TextAnchor.UpperLeft;
+        v.childControlWidth    = true;
+        v.childControlHeight   = true;
+        v.childForceExpandWidth  = true;
+        v.childForceExpandHeight = false;
         return go;
     }
 
