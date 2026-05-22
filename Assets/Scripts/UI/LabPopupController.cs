@@ -25,6 +25,7 @@ public class LabPopupController : MonoBehaviour
     [Header("Вимірювання")]
     public GameObject     experimentPanel;
     public TMP_Text       progressText;
+    public TMP_Text       measurementContextText; // "α = 30°"
     public TMP_Text       measuredValueText;
     public TMP_InputField inputField;
     public Button         measureBtn;
@@ -66,7 +67,7 @@ public class LabPopupController : MonoBehaviour
         if (checkBtn)          checkBtn.onClick.AddListener(ShowResults);
         if (experimentBackBtn) experimentBackBtn.onClick.AddListener(() => { ResetExperiment(); SetPanel(mainPanel); });
 
-        if (inputField)    inputField.onValueChanged.AddListener(_ => RefreshSaveBtn());
+        if (inputField)     inputField.onValueChanged.AddListener(_ => RefreshSaveBtn());
         if (resultsBackBtn) resultsBackBtn.onClick.AddListener(() => { ResetExperiment(); SetPanel(mainPanel); });
     }
 
@@ -101,7 +102,13 @@ public class LabPopupController : MonoBehaviour
 
     void RefreshExperimentUI()
     {
-        progressText.text      = $"Вимір {experiment.CurrentCount + 1} з {experiment.TotalCount}";
+        string ctx = experiment.GetCurrentLabel();
+
+        progressText.text = $"Вимір {experiment.CurrentCount + 1} з {experiment.TotalCount}";
+
+        if (measurementContextText != null)
+            measurementContextText.text = ctx;
+
         measuredValueText.text = "—";
         inputField.text        = "";
         inputField.gameObject.SetActive(true);
@@ -137,6 +144,7 @@ public class LabPopupController : MonoBehaviour
         if (experiment.IsComplete)
         {
             progressText.text = $"Усі {experiment.TotalCount} замірів виконані";
+            if (measurementContextText != null) measurementContextText.text = "";
             measuredValueText.text = "";
             inputField.gameObject.SetActive(false);
             measureBtn.gameObject.SetActive(false);
@@ -154,13 +162,29 @@ public class LabPopupController : MonoBehaviour
         SetPanel(resultsPanel);
         LabResults r = experiment.Calculate();
 
-        var sb = new StringBuilder();
-        sb.AppendLine($"{"№",-4} {"Покази приладу",-18} {"Записано",-14} {"Відхилення",-12}");
-        sb.AppendLine(new string('─', 50));
-        for (int i = 0; i < r.Measurements.Count; i++)
-            sb.AppendLine($"{i + 1,-4} {r.Generated[i],-18:F3} {r.Measurements[i],-14:F3} {r.Deviations[i],-12:F3}");
+        // Якщо експеримент має власну таблицю — використовуємо її (напр. Lab2 з cos α)
+        string customTable = experiment.BuildResultsTable(r);
+        if (customTable != null)
+        {
+            tableText.text = customTable;
+        }
+        else
+        {
+            bool hasLabels = r.Labels != null && r.Labels.Count > 0;
+            var sb = new StringBuilder();
+            if (hasLabels)
+                sb.AppendLine($"{"Умова",-10} {"Покази",-10} {"Записано",-10} {"Відхил.",-8}");
+            else
+                sb.AppendLine($"{"№",-4} {"Покази приладу",-16} {"Записано",-12} {"Відхил.",-8}");
+            sb.AppendLine(new string('─', 42));
+            for (int i = 0; i < r.Measurements.Count; i++)
+            {
+                string lbl = hasLabels ? r.Labels[i] : $"{i + 1}";
+                sb.AppendLine($"{lbl,-10} {r.Generated[i],-10:F3} {r.Measurements[i],-10:F3} {r.Deviations[i],-8:F3}");
+            }
+            tableText.text = sb.ToString();
+        }
 
-        tableText.text   = sb.ToString();
         summaryText.text = $"Середнє: {r.Mean:F3} {r.Unit}      Похибка: ±{r.Uncertainty:F3} {r.Unit}";
     }
 
@@ -174,7 +198,10 @@ public class LabPopupController : MonoBehaviour
 
     void ResetExperiment()
     {
-        experiment = new DefaultLabExperiment(currentData);
+        experiment = currentData.experimentType == LabData.ExperimentType.PhotoEffect
+            ? (LabExperimentBase)new Lab2PhotoExperiment(currentData)
+            : new DefaultLabExperiment(currentData);
+
         if (liveTableText != null)
             liveTableText.text = "Результати з'являться після першого запису...";
     }
@@ -183,10 +210,20 @@ public class LabPopupController : MonoBehaviour
     {
         if (liveTableText == null) return;
         var sb = new StringBuilder();
-        sb.AppendLine($"{"№",-3} {"Показ приладу",-14} {"Записано",-10}");
+
+        string firstLabel = experiment.GetLabel(0);
+        bool hasLabels = !string.IsNullOrEmpty(firstLabel) && firstLabel != "1";
+
+        if (hasLabels)
+            sb.AppendLine($"{"Умова",-10} {"Показ",-10} {"Запис",-8}");
+        else
+            sb.AppendLine($"{"№",-3} {"Показ",-10} {"Запис",-8}");
+
         sb.AppendLine(new string('─', 28));
+
         for (int i = 0; i < experiment.MeasuredCount; i++)
-            sb.AppendLine($"{i + 1,-3} {experiment.GetGenerated(i),-14:F3} {experiment.GetMeasurement(i),-10:F3}");
+            sb.AppendLine($"{experiment.GetLabel(i),-10} {experiment.GetGenerated(i),-10:F3} {experiment.GetMeasurement(i),-8:F3}");
+
         liveTableText.text = sb.ToString();
     }
 

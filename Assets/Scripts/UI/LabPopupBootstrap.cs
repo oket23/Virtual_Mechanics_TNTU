@@ -166,22 +166,22 @@ public static class LabPopupBootstrap
 
         // ── Ліва панель: назва, опис, формула, підказки ──
         var left = VSubPanel(contentRow, "LeftInfo", 38f, BG_HEADER);
-        ctrl.expNameText = Txt(left, "ExpName", "", 16, TextAlignmentOptions.Left, 24, color: TEXT_ACCENT);
+        ctrl.expNameText = Txt(left, "ExpName", "", 20, TextAlignmentOptions.Left, 28, color: TEXT_ACCENT);
         ctrl.expNameText.fontStyle = FontStyles.Bold;
-        Space(left, 4);
-        Divider(left);
         Space(left, 5);
-        Txt(left, "DescLabel", "Опис:", 13, TextAlignmentOptions.Left, 18, color: TEXT_DIM);
-        Space(left, 3);
-        ctrl.expDescText = Txt(left, "ExpDesc", "", 13, TextAlignmentOptions.TopLeft,
+        Divider(left);
+        Space(left, 6);
+        Txt(left, "DescLabel", "Опис:", 15, TextAlignmentOptions.Left, 20, color: TEXT_DIM);
+        Space(left, 4);
+        ctrl.expDescText = Txt(left, "ExpDesc", "", 15, TextAlignmentOptions.TopLeft,
                                0, expand: true, color: TEXT_WHITE);
-        Space(left, 5);
+        Space(left, 6);
         Divider(left);
+        Space(left, 6);
+        ctrl.expFormulaText = Txt(left, "ExpFormula", "", 17, TextAlignmentOptions.Center,
+                                  42, color: TEXT_ACCENT);
         Space(left, 5);
-        ctrl.expFormulaText = Txt(left, "ExpFormula", "", 14, TextAlignmentOptions.Center,
-                                  34, color: TEXT_ACCENT);
-        Space(left, 4);
-        ctrl.expHintsText = Txt(left, "ExpHints", "", 12, TextAlignmentOptions.TopLeft,
+        ctrl.expHintsText = Txt(left, "ExpHints", "", 14, TextAlignmentOptions.TopLeft,
                                 0, expand: true, color: TEXT_DIM);
 
         // ── Права панель: жива таблиця + елементи вимірювання ──
@@ -189,16 +189,25 @@ public static class LabPopupBootstrap
 
         var liveBox = Box(right, "LiveTableBox", new Color(0.07f, 0.09f, 0.14f, 1f), 0, expand: true);
         ctrl.liveTableText = Txt(liveBox, "LiveTable",
-            "Результати з'являться після першого запису...", 13,
+            "Результати з'являться після першого запису...", 15,
             TextAlignmentOptions.TopLeft, 0, expand: true, color: TEXT_WHITE);
 
         Divider(right);
         Space(right, 4);
-        ctrl.progressText = Txt(right, "ProgressText", "Вимір 1 з 5", 15,
+        ctrl.progressText = Txt(right, "ProgressText", "Вимір 1 з 7", 15,
                                 TextAlignmentOptions.Center, 22, color: TEXT_DIM);
         Space(right, 3);
-        var valBox = Box(right, "ValBox", new Color(0.08f, 0.10f, 0.16f, 1f), 50);
-        ctrl.measuredValueText = Txt(valBox, "MeasuredValue", "—", 28,
+
+        // Блок умови виміру (α = 30°) — великий і помітний
+        var ctxBox = Box(right, "ContextBox", new Color(0.14f, 0.18f, 0.28f, 1f), 52);
+        ctrl.measurementContextText = Txt(ctxBox, "ContextText", "", 30,
+                                          TextAlignmentOptions.Center, 0, expand: true,
+                                          color: TEXT_ACCENT);
+        ctrl.measurementContextText.fontStyle = FontStyles.Bold;
+
+        Space(right, 3);
+        var valBox = Box(right, "ValBox", new Color(0.08f, 0.10f, 0.16f, 1f), 46);
+        ctrl.measuredValueText = Txt(valBox, "MeasuredValue", "—", 26,
                                      TextAlignmentOptions.Center, 0, expand: true, color: TEXT_ACCENT);
         Space(right, 4);
         Txt(right, "InputLabel", "Введіть прочитане значення:", 14,
@@ -231,7 +240,7 @@ public static class LabPopupBootstrap
         // Таблиця
         var tableBox = Box(root, "TableBox", new Color(0.08f, 0.10f, 0.16f, 1f), 0,
                            expand: true);
-        ctrl.tableText = Txt(tableBox, "TableText", "", 15,
+        ctrl.tableText = Txt(tableBox, "TableText", "", 17,
                              TextAlignmentOptions.TopLeft, 0, expand: true,
                              color: TEXT_WHITE);
 

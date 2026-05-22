@@ -11,7 +11,7 @@ public abstract class LabExperimentBase
 
     protected LabExperimentBase(LabData data) => this.data = data;
 
-    public float GenerateMeasurement() =>
+    public virtual float GenerateMeasurement() =>
         data.baseValue + Random.Range(-data.spread, data.spread);
 
     public void AddMeasurementPair(float shown, float entered)
@@ -20,13 +20,18 @@ public abstract class LabExperimentBase
         measurements.Add(entered);
     }
 
-    public bool IsComplete => measurements.Count >= data.measurementCount;
+    public bool IsComplete   => measurements.Count >= data.measurementCount;
     public int CurrentCount  => measurements.Count;
     public int MeasuredCount => measurements.Count;
     public int TotalCount    => data.measurementCount;
     public float GetGenerated(int i)   => generated[i];
     public float GetMeasurement(int i) => measurements[i];
 
-    // Точка розширення: вкажи свої формули в класі-нащадку
+    public virtual string GetCurrentLabel() => "";
+    public virtual string GetLabel(int i)   => $"{i + 1}";
+
+    // Будує рядок таблиці результатів. null = використовується стандартна логіка контролера.
+    public virtual string BuildResultsTable(LabResults r) => null;
+
     public abstract LabResults Calculate();
 }
