@@ -14,6 +14,9 @@ public class UIManager : MonoBehaviour
     [Header("Лабораторний попап")]
     public LabPopupController labPopupController;
 
+    [Header("Лаб. Машина Атвуда")]
+    public AtwoodLabController atwoodLabController;
+
     [Header("Скрипти гравця")]
     public MonoBehaviour playerMovement;
     public MonoBehaviour playerInteract;
@@ -40,6 +43,18 @@ public class UIManager : MonoBehaviour
 
         labPopupController.gameObject.SetActive(true);
         labPopupController.Open(data);
+    }
+
+    public void OpenAtwoodLab(AtwoodLabData data)
+    {
+        if (crosshair != null) crosshair.SetActive(false);
+        playerMovement.enabled = false;
+        playerInteract.enabled = false;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible   = true;
+
+        atwoodLabController.gameObject.SetActive(true);
+        atwoodLabController.Open(data);
     }
 
     public void CloseMenu()

@@ -9,6 +9,7 @@ public class InteractableObject : MonoBehaviour
 
     [Header("Лабораторна робота")]
     public LabData labData;
+    public AtwoodLabData atwoodLabData;
 
     [Header("Події при кліку (якщо немає labData)")]
     public UnityEvent onInteract;
@@ -29,16 +30,15 @@ public class InteractableObject : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        if (labData != null)
-        {
-            UIManager uim = FindFirstObjectByType<UIManager>();
-            if (uim == null) { Debug.LogError("[Interact] UIManager не знайдено!"); return; }
+        UIManager uim = FindFirstObjectByType<UIManager>();
+        if (uim == null) { Debug.LogError("[Interact] UIManager не знайдено!"); return; }
+
+        if (atwoodLabData != null)
+            uim.OpenAtwoodLab(atwoodLabData);
+        else if (labData != null)
             uim.OpenLabMenu(labData);
-        }
         else
-        {
             onInteract.Invoke();
-        }
     }
 
     public void Highlight()
