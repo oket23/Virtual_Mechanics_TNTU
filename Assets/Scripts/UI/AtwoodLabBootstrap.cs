@@ -87,14 +87,15 @@ public static class AtwoodLabBootstrap
         dlgV.childControlWidth    = true;
         dlgV.childControlHeight   = true;
         dlgV.childForceExpandWidth  = true;
-        dlgV.childForceExpandHeight = false;
+        dlgV.childForceExpandHeight = true;  // proportional layout
 
-        // 1. Header
+        // Layout: 10% header | 70% content | 10% hint | 10% info
+        // 1. Header (10%)
         ctrl.headerCloseBtn = BuildHeader(dialog);
 
-        // 2. Content row
+        // 2. Content row (70%)
         var content = Go(dialog, "ContentRow");
-        content.AddComponent<LayoutElement>().flexibleHeight = 1;
+        content.AddComponent<LayoutElement>().flexibleHeight = 7;
         var rowH = content.AddComponent<HorizontalLayoutGroup>();
         rowH.spacing              = 1;
         rowH.childControlWidth    = true;
@@ -106,33 +107,23 @@ public static class AtwoodLabBootstrap
         BuildCenter(content, ctrl);
         BuildRight(content, ctrl);
 
-        // 3. Footer
-        BuildFooter(dialog);
+        // 3. Hint row (10%)
+        ctrl.hintBarText = BuildHintRow(dialog);
 
-        // 4. Hint bar
-        var hintGO = Go(dialog, "HintBar");
-        hintGO.AddComponent<LayoutElement>().preferredHeight = 36;
-        hintGO.AddComponent<Image>().color = BG_HEADER;
-        var hintTxtGO = Go(hintGO, "T");
-        Stretch(hintTxtGO);
-        var hintTxt = hintTxtGO.AddComponent<TextMeshProUGUI>();
-        hintTxt.text      = "";
-        hintTxt.fontSize  = 13;
-        hintTxt.alignment = TextAlignmentOptions.Center;
-        hintTxt.color     = TEXT_DIM;
-        ctrl.hintBarText  = hintTxt;
+        // 4. Info row (10%)
+        BuildInfoRow(dialog);
 
         uim.atwoodLabController = ctrl;
     }
 
-    // ── Header ────────────────────────────────────────────────────────────────
+    // ── Header (10% of dialog height) ────────────────────────────────────────
     static Button BuildHeader(GameObject parent)
     {
         var hdr = Go(parent, "Header");
-        hdr.AddComponent<LayoutElement>().preferredHeight = 48;
+        hdr.AddComponent<LayoutElement>().flexibleHeight = 1;  // 10% share
         hdr.AddComponent<Image>().color = BG_HEADER;
         var hlg = hdr.AddComponent<HorizontalLayoutGroup>();
-        hlg.padding              = new RectOffset(16, 6, 0, 0);
+        hlg.padding              = new RectOffset(12, 4, 0, 0);
         hlg.spacing              = 4;
         hlg.childControlWidth    = true;
         hlg.childControlHeight   = true;
@@ -143,17 +134,17 @@ public static class AtwoodLabBootstrap
         titleGO.AddComponent<LayoutElement>().flexibleWidth = 1;
         var t = titleGO.AddComponent<TextMeshProUGUI>();
         t.text      = "ЛАБОРАТОРНА РОБОТА №2  —  МАШИНА АТВУДА";
-        t.fontSize  = 17;
+        t.fontSize  = 13;
         t.fontStyle = FontStyles.Bold;
         t.alignment = TextAlignmentOptions.MidlineLeft;
         t.color     = TEXT_ACCENT;
 
         var closeGO = Go(hdr, "CloseBtn");
-        closeGO.AddComponent<LayoutElement>().preferredWidth = 110;
+        closeGO.AddComponent<LayoutElement>().preferredWidth = 80;
         closeGO.AddComponent<Image>().color = BTN_RED;
         var closeBtn = closeGO.AddComponent<Button>();
         SetBtnColors(closeBtn, BTN_RED);
-        BtnLabel(closeGO, "✕  Закрити", 13f);
+        BtnLabel(closeGO, "✕  Закрити", 11f);
         return closeBtn;
     }
 
@@ -366,7 +357,7 @@ public static class AtwoodLabBootstrap
         float[] w = { 0.4f, 1.8f, 1.8f, 2.4f, 2.0f, 2.0f, 1.4f };
 
         // Header
-        var hdrRow = TableRow(parent, 22);
+        var hdrRow = TableRow(parent, 28);
         SetHdrCell(hdrRow, w[0], "№");
         SetHdrCell(hdrRow, w[1], "A  S₁\n(мм)");
         SetHdrCell(hdrRow, w[2], "B  S₂\n(мм)");
@@ -378,7 +369,7 @@ public static class AtwoodLabBootstrap
         Space(parent, 1);
 
         // Row 1 — A1, B1, C1, E1, H1, I1 are active data cells
-        var r1 = TableRow(parent, 26);
+        var r1 = TableRow(parent, 32);
         DataCell(r1, w[0], TEXT_DIM).txt.text = "1";
         var cellA1 = DataCell(r1, w[1], TEXT_WHITE);
         var cellB1 = DataCell(r1, w[2], TEXT_WHITE);
@@ -396,7 +387,7 @@ public static class AtwoodLabBootstrap
         Space(parent, 1);
 
         // Row 2 — A2, C2 only
-        var r2 = TableRow(parent, 26);
+        var r2 = TableRow(parent, 32);
         DataCell(r2, w[0], TEXT_DIM).txt.text = "2";
         var cellA2 = DataCell(r2, w[1], TEXT_WHITE);
         DataCell(r2, w[2], TEXT_DIM);   // B — empty
@@ -410,7 +401,7 @@ public static class AtwoodLabBootstrap
         Space(parent, 1);
 
         // Row 3 — A3, C3 only
-        var r3 = TableRow(parent, 26);
+        var r3 = TableRow(parent, 32);
         DataCell(r3, w[0], TEXT_DIM).txt.text = "3";
         var cellA3 = DataCell(r3, w[1], TEXT_WHITE);
         DataCell(r3, w[2], TEXT_DIM);
@@ -435,7 +426,7 @@ public static class AtwoodLabBootstrap
         float[] w = { 1.6f, 1.6f, 1.6f, 2.0f, 2.0f, 1.4f };
 
         // Header
-        var hdrRow = TableRow(parent, 22);
+        var hdrRow = TableRow(parent, 28);
         SetHdrCell(hdrRow, w[0], "D  m\n(г)");
         SetHdrCell(hdrRow, w[1], "F  m₁\n(г)");
         SetHdrCell(hdrRow, w[2], "G  g\n(м/с²)");
@@ -446,7 +437,7 @@ public static class AtwoodLabBootstrap
         Space(parent, 1);
 
         // Single data row
-        var r1 = TableRow(parent, 26);
+        var r1 = TableRow(parent, 32);
         var cellD1 = DataCell(r1, w[0], TEXT_WHITE);
         var cellF1 = DataCell(r1, w[1], TEXT_WHITE);
         var cellG1 = DataCell(r1, w[2], TEXT_WHITE);
@@ -465,30 +456,42 @@ public static class AtwoodLabBootstrap
             10, false, TEXT_DIM, 14);
     }
 
-    // ── Footer ────────────────────────────────────────────────────────────────
-    static void BuildFooter(GameObject parent)
+    // ── Hint row — 10% of dialog height ──────────────────────────────────────
+    static TMP_Text BuildHintRow(GameObject parent)
     {
-        var footer = Go(parent, "Footer");
-        footer.AddComponent<LayoutElement>().preferredHeight = 26;
-        footer.AddComponent<Image>().color = BG_FOOTER;
-        var hlg = footer.AddComponent<HorizontalLayoutGroup>();
-        hlg.padding   = new RectOffset(14, 14, 0, 0);
-        hlg.spacing   = 12;
+        var row = Go(parent, "HintRow");
+        var le = row.AddComponent<LayoutElement>();
+        le.flexibleHeight = 1f;   // 1 share out of 10 total → 10%
+        row.AddComponent<Image>().color = BG_HEADER;
+        var tGO = Go(row, "T");
+        Stretch(tGO);
+        var txt = tGO.AddComponent<TextMeshProUGUI>();
+        txt.text      = "";
+        txt.fontSize  = 12;
+        txt.alignment = TextAlignmentOptions.Center;
+        txt.color     = TEXT_DIM;
+        return txt;
+    }
+
+    // ── Info row — 10% of dialog height ──────────────────────────────────────
+    static void BuildInfoRow(GameObject parent)
+    {
+        var row = Go(parent, "InfoRow");
+        var le = row.AddComponent<LayoutElement>();
+        le.flexibleHeight = 1f;   // 1 share out of 10 total → 10%
+        row.AddComponent<Image>().color = BG_FOOTER;
+        var hlg = row.AddComponent<HorizontalLayoutGroup>();
+        hlg.padding              = new RectOffset(14, 14, 0, 0);
+        hlg.spacing              = 12;
         hlg.childControlWidth    = true;
         hlg.childControlHeight   = true;
         hlg.childForceExpandWidth  = false;
         hlg.childForceExpandHeight = true;
-
-        FooterText(footer, "Lab", "Лабораторія кіберфізичних систем ТНТУ", 10, TEXT_DIM);
-        FooterText(footer, "Book", "Механіка та молекулярна фізика. Лабораторний практикум", 10, TEXT_DIM);
-
-        // Spacer
-        Go(footer, "Spacer").AddComponent<LayoutElement>().flexibleWidth = 1;
-
-        FooterText(footer, "Date",
-            $"Дата: {System.DateTime.Now:dd.MM.yyyy}", 10, TEXT_DIM);
-        FooterText(footer, "ExpID",
-            $"Дослід №2", 10, TEXT_DIM);
+        FooterText(row, "Lab",  "Лабораторія кіберфізичних систем ТНТУ", 11, TEXT_WHITE);
+        FooterText(row, "Book", "Механіка та молекулярна фізика. Лабораторний практикум", 11, TEXT_WHITE);
+        Go(row, "Spacer").AddComponent<LayoutElement>().flexibleWidth = 1;
+        FooterText(row, "Date",  $"Дата: {System.DateTime.Now:dd.MM.yyyy}", 11, TEXT_WHITE);
+        FooterText(row, "ExpID", "Дослід №2", 11, TEXT_WHITE);
     }
 
     // ── Table helpers ─────────────────────────────────────────────────────────
@@ -516,7 +519,7 @@ public static class AtwoodLabBootstrap
         var tgo = Go(go, "T");
         Stretch(tgo);
         var t = tgo.AddComponent<TextMeshProUGUI>();
-        t.text = text; t.fontSize = 9;
+        t.text = text; t.fontSize = 13;
         t.fontStyle = FontStyles.Bold;
         t.alignment = TextAlignmentOptions.Center;
         t.color = TEXT_ACCENT;
@@ -531,7 +534,7 @@ public static class AtwoodLabBootstrap
         var tgo = Go(go, "T");
         Stretch(tgo);
         var t = tgo.AddComponent<TextMeshProUGUI>();
-        t.text = ""; t.fontSize = 10;
+        t.text = ""; t.fontSize = 15;
         t.alignment = TextAlignmentOptions.Center;
         t.color = textColor;
         return new CellRef { bg = img, txt = t };
