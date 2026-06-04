@@ -36,4 +36,7 @@ public class AtwoodLabData : ScriptableObject
 
     [Header("Посилання")]
     public string externalUrl = "";
+
+    [Header("Зображення схеми")]
+    public Texture2D schemeImage;
 }

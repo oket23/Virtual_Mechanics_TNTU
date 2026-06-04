@@ -36,6 +36,9 @@ public class AtwoodLabController : MonoBehaviour
     public TMP_Text       measErrorText;
     public Button         measInsertBtn;
 
+    // ── Scheme image (left panel) ─────────────────────────────────────────────
+    public UnityEngine.UI.RawImage schemeRawImage;
+
     // ── Conclusion ────────────────────────────────────────────────────────────
     public TMP_Text conclusionText;
     public Button   conclusionCloseBtn;
@@ -117,6 +120,9 @@ public class AtwoodLabController : MonoBehaviour
         stepIdx       = 0;
         hasGenerated  = false;
         activeCellName = "";
+
+        if (schemeRawImage != null)
+            schemeRawImage.texture = data.schemeImage;
 
         BuildSteps();
         ClearAllCells();

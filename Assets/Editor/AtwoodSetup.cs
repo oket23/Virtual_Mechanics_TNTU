@@ -143,6 +143,11 @@ public static class AtwoodSetup
         d.gravG       = 9.81f;
         d.externalUrl = "";
 
+        const string imgPath = "Assets/Labs/Lab_2/setup_лаб2_2026.webp";
+        var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(imgPath);
+        if (tex != null) d.schemeImage = tex;
+        else Debug.LogWarning($"[AtwoodSetup] Зображення не знайдено: {imgPath}");
+
         d.quizQuestions = new AtwoodLabData.QuizQuestion[]
         {
             new AtwoodLabData.QuizQuestion

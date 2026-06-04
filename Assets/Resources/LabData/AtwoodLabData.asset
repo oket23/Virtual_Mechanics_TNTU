@@ -75,3 +75,4 @@ MonoBehaviour:
   massM1: 10
   gravG: 9.81
   externalUrl: 
+  schemeImage: {fileID: 0}

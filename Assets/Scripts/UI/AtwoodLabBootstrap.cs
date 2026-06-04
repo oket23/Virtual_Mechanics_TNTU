@@ -102,7 +102,7 @@ public static class AtwoodLabBootstrap
         rowH.childForceExpandWidth  = true;
         rowH.childForceExpandHeight = true;
 
-        BuildLeft(content);
+        BuildLeft(content, ctrl);
         BuildCenter(content, ctrl);
         BuildRight(content, ctrl);
 
@@ -158,7 +158,7 @@ public static class AtwoodLabBootstrap
     }
 
     // ── Left panel ────────────────────────────────────────────────────────────
-    static void BuildLeft(GameObject parent)
+    static void BuildLeft(GameObject parent, AtwoodLabController ctrl)
     {
         var left = VPanel(parent, "LeftPanel", 18f, BG_PANEL);
 
@@ -166,15 +166,11 @@ public static class AtwoodLabBootstrap
         Divider(left);
         Space(left, 6);
 
-        Lbl(left, "Scheme",
-            "    +--[Блок]--+\n" +
-            "    |          |\n" +
-            " [m+m1]       [m]\n" +
-            "    |          |\n" +
-            "   ===        ===\n\n" +
-            " m  — маса тягарця\n" +
-            " m1 — перевантаження",
-            11, false, TEXT_DIM, 0, expand: true);
+        var imgGO = Go(left, "SchemeImage");
+        imgGO.AddComponent<LayoutElement>().flexibleHeight = 1f;
+        var rawImg = imgGO.AddComponent<RawImage>();
+        rawImg.color = Color.white;
+        ctrl.schemeRawImage = rawImg;
 
         Divider(left);
         Space(left, 6);
@@ -304,7 +300,7 @@ public static class AtwoodLabBootstrap
         Lbl(panel, "ValLbl", "Введіть значення:", 13, false, TEXT_DIM, 18);
         Space(panel, 4);
         ctrl.measValueInput = MakeInput(panel, "ValInput", "0.0000", 44,
-            TMP_InputField.ContentType.DecimalNumber);
+            TMP_InputField.ContentType.Standard);
 
         Space(panel, 10);
         Divider(panel);
