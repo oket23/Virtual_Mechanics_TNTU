@@ -108,6 +108,8 @@ public class AtwoodLabController : MonoBehaviour
         measInsertBtn.onClick.AddListener(DoInsert);
         conclusionCloseBtn.onClick.AddListener(Close);
         if (headerCloseBtn) headerCloseBtn.onClick.AddListener(Close);
+
+        if (headerCloseBtn) headerCloseBtn.GetComponentInChildren<TMP_Text>().text = "× Закрити";
     }
 
     // ── Public API ────────────────────────────────────────────────────────────
