@@ -64,6 +64,20 @@ public class AtwoodLabController : MonoBehaviour
     public Image  t2BgK;  public TMP_Text t2TxtK;
     public Image  t2BgL;  public TMP_Text t2TxtL;
 
+    // ── Table 1 — Сер.Д row auto-display cells ────────────────────────────────
+    public TMP_Text t1TxtAvgA;  // averaged S₁ (auto-filled)
+    public TMP_Text t1TxtAvgC;  // averaged t₂ (auto-filled)
+
+    // ── Table 1 — pre-filled error columns ────────────────────────────────────
+    public TMP_Text[] t1TxtDS1 = new TMP_Text[4];  // ΔS₁ rows 1,2,3 + avg
+    public TMP_Text[] t1TxtDT2 = new TMP_Text[4];  // Δt₂ rows 1,2,3 + avg
+    public TMP_Text   t1TxtDS2;                      // ΔS₂ in avg row
+
+    // ── Table 2 — pre-filled error columns ────────────────────────────────────
+    public TMP_Text t2TxtDM;
+    public TMP_Text t2TxtDM1;
+    public TMP_Text t2TxtDG;
+
     // ── Cell colours ──────────────────────────────────────────────────────────
     static readonly Color CELL_NORMAL = new Color(0.11f, 0.13f, 0.20f, 1f);
     static readonly Color CELL_ACTIVE = new Color(0.80f, 0.45f, 0.05f, 1f);
@@ -128,6 +142,7 @@ public class AtwoodLabController : MonoBehaviour
 
         BuildSteps();
         ClearAllCells();
+        FillPrefilledCells();
 
         quizSub = 0;
         if (data.quizQuestions?.Length > 0)
@@ -510,14 +525,44 @@ public class AtwoodLabController : MonoBehaviour
     {
         switch (cell)
         {
-            case "A1": valA[0] = val; break;
-            case "A2": valA[1] = val; break;
-            case "A3": valA[2] = val; break;
+            case "A1": valA[0] = val; UpdateAvgS1(); break;
+            case "A2": valA[1] = val; UpdateAvgS1(); break;
+            case "A3": valA[2] = val; UpdateAvgS1(); break;
             case "B1": valB    = val; break;
-            case "C1": valC[0] = val; break;
-            case "C2": valC[1] = val; break;
-            case "C3": valC[2] = val; break;
+            case "C1": valC[0] = val; UpdateAvgT2(); break;
+            case "C2": valC[1] = val; UpdateAvgT2(); break;
+            case "C3": valC[2] = val; UpdateAvgT2(); break;
         }
+    }
+
+    void FillPrefilledCells()
+    {
+        string ds1 = data.s1SysError.ToString("F1");
+        string dt2 = data.t2SysError.ToString("F4");
+        string ds2 = data.s2SysError.ToString("F1");
+        for (int i = 0; i < 4; i++)
+        {
+            if (i < t1TxtDS1.Length && t1TxtDS1[i] != null) t1TxtDS1[i].text = ds1;
+            if (i < t1TxtDT2.Length && t1TxtDT2[i] != null) t1TxtDT2[i].text = dt2;
+        }
+        if (t1TxtDS2  != null) t1TxtDS2.text  = ds2;
+        if (t2TxtDM   != null) t2TxtDM.text   = "0.1";
+        if (t2TxtDM1  != null) t2TxtDM1.text  = "0.1";
+        if (t2TxtDG   != null) t2TxtDG.text   = "0.01";
+    }
+
+    void UpdateAvgS1()
+    {
+        if (t1TxtAvgA == null) return;
+        t1TxtAvgA.text = (valA[0] > 0 && valA[1] > 0 && valA[2] > 0)
+            ? S1Avg().ToString("F1") : "";
+    }
+
+    void UpdateAvgT2()
+    {
+        if (t1TxtAvgC == null) return;
+        t1TxtAvgC.text = (valC[0] > 0 && valC[1] > 0 && valC[2] > 0)
+            ? T2Avg().ToString("F4") : "";
     }
 
     static string FormatCell(string cell, float val)
@@ -613,6 +658,8 @@ public class AtwoodLabController : MonoBehaviour
         SetCell(t2BgJ, t2TxtJ, CELL_NORMAL, "");
         SetCell(t2BgK, t2TxtK, CELL_NORMAL, "");
         SetCell(t2BgL, t2TxtL, CELL_NORMAL, "");
+        if (t1TxtAvgA != null) t1TxtAvgA.text = "";
+        if (t1TxtAvgC != null) t1TxtAvgC.text = "";
     }
 
     void HighlightCell(string cell, Color color)
