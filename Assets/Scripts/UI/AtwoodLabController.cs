@@ -362,7 +362,7 @@ public class AtwoodLabController : MonoBehaviour
             case 'L':
             {
                 float m = data.massM/1000f, m1 = data.massM1/1000f;
-                float dm = 0.0001f, dm1 = 0.0001f, dg = 0.01f;
+                float dm = 0.00005f, dm1 = 0.0005f, dg = 0.005f;
                 return
                     "Відносна похибка  ε% (Таблиця 2)\n\n" +
                     "ε = (Δm₁·2m/(m₁·(2m+m₁)) + Δg/g + 2·Δm/(2m+m₁))·100\n\n" +
@@ -546,9 +546,9 @@ public class AtwoodLabController : MonoBehaviour
             if (i < t1TxtDT2.Length && t1TxtDT2[i] != null) t1TxtDT2[i].text = dt2;
         }
         if (t1TxtDS2  != null) t1TxtDS2.text  = ds2;
-        if (t2TxtDM   != null) t2TxtDM.text   = "0.1";
-        if (t2TxtDM1  != null) t2TxtDM1.text  = "0.1";
-        if (t2TxtDG   != null) t2TxtDG.text   = "0.01";
+        if (t2TxtDM   != null) t2TxtDM.text   = "0.05";
+        if (t2TxtDM1  != null) t2TxtDM1.text  = "0.5";
+        if (t2TxtDG   != null) t2TxtDG.text   = "0.005";
     }
 
     void UpdateAvgS1()
@@ -632,7 +632,7 @@ public class AtwoodLabController : MonoBehaviour
         float m1 = data.massM1 / 1000f;
         float g  = data.gravG;
         float a  = m1 * g / (2f * m + m1);
-        const float dm = 0.0001f, dm1 = 0.0001f, dg = 0.01f;
+        const float dm = 0.00005f, dm1 = 0.0005f, dg = 0.005f;
         float eps = (dm1 * 2f * m / (m1 * (2f * m + m1)) + dg / g + 2f * dm / (2f * m + m1)) * 100f;
         return new[] { a, a * eps / 100f, eps };
     }
