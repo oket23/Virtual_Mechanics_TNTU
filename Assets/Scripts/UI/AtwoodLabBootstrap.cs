@@ -348,112 +348,154 @@ public static class AtwoodLabBootstrap
         BuildTable2(right, ctrl);
     }
 
-    // Table 1: columns №, A:S₁, B:S₂, C:t₂, E:ā, H:Δā, I:ε
+    // Table 1: №, S₁, ΔS₁, t₂, Δt₂, S₂, ΔS₂, ā, Δā, ε  (+Сер.Д avg row)
     static void BuildTable1(GameObject parent, AtwoodLabController ctrl)
     {
         Lbl(parent, "T1Title", "ТАБЛИЦЯ 1 — ДОСЛІДНІ ДАНІ", 11, true, TEXT_ACCENT, 18);
         Space(parent, 4);
 
-        float[] w = { 0.4f, 1.8f, 1.8f, 2.4f, 2.0f, 2.0f, 1.4f };
+        // column flex weights
+        float n=0.30f, s1=1.2f, ds1=1.0f, t2=1.3f, dt2=1.0f,
+              s2=1.2f, ds2=1.0f, a=1.3f, da=1.3f, ep=1.0f;
 
-        // Header
-        var hdrRow = TableRow(parent, 28);
-        SetHdrCell(hdrRow, w[0], "№");
-        SetHdrCell(hdrRow, w[1], "A  S₁\n(мм)");
-        SetHdrCell(hdrRow, w[2], "B  S₂\n(мм)");
-        SetHdrCell(hdrRow, w[3], "C  t₂\n(с)");
-        SetHdrCell(hdrRow, w[4], "E  ā\n(м/с²)");
-        SetHdrCell(hdrRow, w[5], "H  Δā\n(м/с²)");
-        SetHdrCell(hdrRow, w[6], "I  ε\n(%)");
-
-        Space(parent, 1);
-
-        // Row 1 — A1, B1, C1, E1, H1, I1 are active data cells
-        var r1 = TableRow(parent, 32);
-        DataCell(r1, w[0], TEXT_DIM).txt.text = "1";
-        var cellA1 = DataCell(r1, w[1], TEXT_WHITE);
-        var cellB1 = DataCell(r1, w[2], TEXT_WHITE);
-        var cellC1 = DataCell(r1, w[3], TEXT_WHITE);
-        var cellE1 = DataCell(r1, w[4], TEXT_WHITE);
-        var cellH1 = DataCell(r1, w[5], TEXT_WHITE);
-        var cellI1 = DataCell(r1, w[6], TEXT_WHITE);
-        ctrl.t1BgA[0] = cellA1.bg; ctrl.t1TxtA[0] = cellA1.txt;
-        ctrl.t1BgB    = cellB1.bg; ctrl.t1TxtB    = cellB1.txt;
-        ctrl.t1BgC[0] = cellC1.bg; ctrl.t1TxtC[0] = cellC1.txt;
-        ctrl.t1BgE    = cellE1.bg; ctrl.t1TxtE    = cellE1.txt;
-        ctrl.t1BgH    = cellH1.bg; ctrl.t1TxtH    = cellH1.txt;
-        ctrl.t1BgI    = cellI1.bg; ctrl.t1TxtI    = cellI1.txt;
+        // Header row
+        var hdr = TableRow(parent, 26);
+        SetHdrCell(hdr, n,   "№");
+        SetHdrCell(hdr, s1,  "S₁\n(мм)");
+        SetHdrCell(hdr, ds1, "ΔS₁\n(мм)");
+        SetHdrCell(hdr, t2,  "t₂\n(с)");
+        SetHdrCell(hdr, dt2, "Δt₂\n(с)");
+        SetHdrCell(hdr, s2,  "S₂\n(мм)");
+        SetHdrCell(hdr, ds2, "ΔS₂\n(мм)");
+        SetHdrCell(hdr, a,   "ā\n(м/с²)");
+        SetHdrCell(hdr, da,  "Δā\n(м/с²)");
+        SetHdrCell(hdr, ep,  "ε\n(%)");
 
         Space(parent, 1);
 
-        // Row 2 — A2, C2 only
-        var r2 = TableRow(parent, 32);
-        DataCell(r2, w[0], TEXT_DIM).txt.text = "2";
-        var cellA2 = DataCell(r2, w[1], TEXT_WHITE);
-        DataCell(r2, w[2], TEXT_DIM);   // B — empty
-        var cellC2 = DataCell(r2, w[3], TEXT_WHITE);
-        DataCell(r2, w[4], TEXT_DIM);   // E — spans row 1 only
-        DataCell(r2, w[5], TEXT_DIM);   // H — spans row 1 only
-        DataCell(r2, w[6], TEXT_DIM);   // I — spans row 1 only
-        ctrl.t1BgA[1] = cellA2.bg; ctrl.t1TxtA[1] = cellA2.txt;
-        ctrl.t1BgC[1] = cellC2.bg; ctrl.t1TxtC[1] = cellC2.txt;
+        // Row 1: A1, DS1[0], C1, DT2[0], empties
+        var r1 = TableRow(parent, 30);
+        DataCell(r1, n,   TEXT_DIM).txt.text = "1";
+        var cA1  = DataCell(r1, s1,  TEXT_WHITE);
+        var cDS1_0 = DataCell(r1, ds1, TEXT_DIM);
+        var cC1  = DataCell(r1, t2,  TEXT_WHITE);
+        var cDT2_0 = DataCell(r1, dt2, TEXT_DIM);
+        DataCell(r1, s2,  TEXT_DIM);
+        DataCell(r1, ds2, TEXT_DIM);
+        DataCell(r1, a,   TEXT_DIM);
+        DataCell(r1, da,  TEXT_DIM);
+        DataCell(r1, ep,  TEXT_DIM);
+        ctrl.t1BgA[0] = cA1.bg; ctrl.t1TxtA[0] = cA1.txt;
+        ctrl.t1BgC[0] = cC1.bg; ctrl.t1TxtC[0] = cC1.txt;
+        ctrl.t1TxtDS1[0] = cDS1_0.txt;
+        ctrl.t1TxtDT2[0] = cDT2_0.txt;
 
         Space(parent, 1);
 
-        // Row 3 — A3, C3 only
-        var r3 = TableRow(parent, 32);
-        DataCell(r3, w[0], TEXT_DIM).txt.text = "3";
-        var cellA3 = DataCell(r3, w[1], TEXT_WHITE);
-        DataCell(r3, w[2], TEXT_DIM);
-        var cellC3 = DataCell(r3, w[3], TEXT_WHITE);
-        DataCell(r3, w[4], TEXT_DIM);
-        DataCell(r3, w[5], TEXT_DIM);
-        DataCell(r3, w[6], TEXT_DIM);
-        ctrl.t1BgA[2] = cellA3.bg; ctrl.t1TxtA[2] = cellA3.txt;
-        ctrl.t1BgC[2] = cellC3.bg; ctrl.t1TxtC[2] = cellC3.txt;
+        // Row 2: A2, DS1[1], C2, DT2[1], empties
+        var r2 = TableRow(parent, 30);
+        DataCell(r2, n,   TEXT_DIM).txt.text = "2";
+        var cA2  = DataCell(r2, s1,  TEXT_WHITE);
+        var cDS1_1 = DataCell(r2, ds1, TEXT_DIM);
+        var cC2  = DataCell(r2, t2,  TEXT_WHITE);
+        var cDT2_1 = DataCell(r2, dt2, TEXT_DIM);
+        DataCell(r2, s2,  TEXT_DIM);
+        DataCell(r2, ds2, TEXT_DIM);
+        DataCell(r2, a,   TEXT_DIM);
+        DataCell(r2, da,  TEXT_DIM);
+        DataCell(r2, ep,  TEXT_DIM);
+        ctrl.t1BgA[1] = cA2.bg; ctrl.t1TxtA[1] = cA2.txt;
+        ctrl.t1BgC[1] = cC2.bg; ctrl.t1TxtC[1] = cC2.txt;
+        ctrl.t1TxtDS1[1] = cDS1_1.txt;
+        ctrl.t1TxtDT2[1] = cDT2_1.txt;
 
-        Space(parent, 4);
-        Lbl(parent, "T1Note", "ΔS = 0.5 мм   |   Δt = 0.0005 с",
-            10, false, TEXT_DIM, 14);
+        Space(parent, 1);
+
+        // Row 3: A3, DS1[2], C3, DT2[2], empties
+        var r3 = TableRow(parent, 30);
+        DataCell(r3, n,   TEXT_DIM).txt.text = "3";
+        var cA3  = DataCell(r3, s1,  TEXT_WHITE);
+        var cDS1_2 = DataCell(r3, ds1, TEXT_DIM);
+        var cC3  = DataCell(r3, t2,  TEXT_WHITE);
+        var cDT2_2 = DataCell(r3, dt2, TEXT_DIM);
+        DataCell(r3, s2,  TEXT_DIM);
+        DataCell(r3, ds2, TEXT_DIM);
+        DataCell(r3, a,   TEXT_DIM);
+        DataCell(r3, da,  TEXT_DIM);
+        DataCell(r3, ep,  TEXT_DIM);
+        ctrl.t1BgA[2] = cA3.bg; ctrl.t1TxtA[2] = cA3.txt;
+        ctrl.t1BgC[2] = cC3.bg; ctrl.t1TxtC[2] = cC3.txt;
+        ctrl.t1TxtDS1[2] = cDS1_2.txt;
+        ctrl.t1TxtDT2[2] = cDT2_2.txt;
+
+        Space(parent, 1);
+
+        // Сер.Д row: avgA, DS1[3], avgC, DT2[3], B1, DS2, E1, H1, I1
+        var rAvg = TableRow(parent, 30);
+        DataCell(rAvg, n,   TEXT_DIM).txt.text = "Сер.";
+        var cAvgA  = DataCell(rAvg, s1,  TEXT_DIM);
+        var cDS1_3 = DataCell(rAvg, ds1, TEXT_DIM);
+        var cAvgC  = DataCell(rAvg, t2,  TEXT_DIM);
+        var cDT2_3 = DataCell(rAvg, dt2, TEXT_DIM);
+        var cB1    = DataCell(rAvg, s2,  TEXT_WHITE);
+        var cDS2   = DataCell(rAvg, ds2, TEXT_DIM);
+        var cE1    = DataCell(rAvg, a,   TEXT_WHITE);
+        var cH1    = DataCell(rAvg, da,  TEXT_WHITE);
+        var cI1    = DataCell(rAvg, ep,  TEXT_WHITE);
+        ctrl.t1TxtAvgA   = cAvgA.txt;
+        ctrl.t1TxtDS1[3] = cDS1_3.txt;
+        ctrl.t1TxtAvgC   = cAvgC.txt;
+        ctrl.t1TxtDT2[3] = cDT2_3.txt;
+        ctrl.t1BgB  = cB1.bg;  ctrl.t1TxtB  = cB1.txt;
+        ctrl.t1TxtDS2    = cDS2.txt;
+        ctrl.t1BgE  = cE1.bg;  ctrl.t1TxtE  = cE1.txt;
+        ctrl.t1BgH  = cH1.bg;  ctrl.t1TxtH  = cH1.txt;
+        ctrl.t1BgI  = cI1.bg;  ctrl.t1TxtI  = cI1.txt;
     }
 
-    // Table 2: columns D:m, F:m₁, G:g, J:ā, K:Δā, L:ε
+    // Table 2: m, Δm, m₁, Δm₁, g, Δg, ā, Δā, ε
     static void BuildTable2(GameObject parent, AtwoodLabController ctrl)
     {
         Lbl(parent, "T2Title", "ТАБЛИЦЯ 2 — ТЕОРЕТИЧНІ ДАНІ", 11, true, TEXT_ACCENT, 18);
         Space(parent, 4);
 
-        float[] w = { 1.6f, 1.6f, 1.6f, 2.0f, 2.0f, 1.4f };
+        float m=1.2f, dm=1.0f, m1=1.2f, dm1=1.0f, g=1.3f, dg=1.0f,
+              a=1.3f, da=1.3f, ep=1.0f;
 
         // Header
-        var hdrRow = TableRow(parent, 28);
-        SetHdrCell(hdrRow, w[0], "D  m\n(г)");
-        SetHdrCell(hdrRow, w[1], "F  m₁\n(г)");
-        SetHdrCell(hdrRow, w[2], "G  g\n(м/с²)");
-        SetHdrCell(hdrRow, w[3], "J  ā\n(м/с²)");
-        SetHdrCell(hdrRow, w[4], "K  Δā\n(м/с²)");
-        SetHdrCell(hdrRow, w[5], "L  ε\n(%)");
+        var hdr = TableRow(parent, 26);
+        SetHdrCell(hdr, m,   "m\n(г)");
+        SetHdrCell(hdr, dm,  "Δm\n(г)");
+        SetHdrCell(hdr, m1,  "m₁\n(г)");
+        SetHdrCell(hdr, dm1, "Δm₁\n(г)");
+        SetHdrCell(hdr, g,   "g\n(м/с²)");
+        SetHdrCell(hdr, dg,  "Δg\n(м/с²)");
+        SetHdrCell(hdr, a,   "ā\n(м/с²)");
+        SetHdrCell(hdr, da,  "Δā\n(м/с²)");
+        SetHdrCell(hdr, ep,  "ε\n(%)");
 
         Space(parent, 1);
 
         // Single data row
-        var r1 = TableRow(parent, 32);
-        var cellD1 = DataCell(r1, w[0], TEXT_WHITE);
-        var cellF1 = DataCell(r1, w[1], TEXT_WHITE);
-        var cellG1 = DataCell(r1, w[2], TEXT_WHITE);
-        var cellJ1 = DataCell(r1, w[3], TEXT_WHITE);
-        var cellK1 = DataCell(r1, w[4], TEXT_WHITE);
-        var cellL1 = DataCell(r1, w[5], TEXT_WHITE);
-        ctrl.t2BgD = cellD1.bg; ctrl.t2TxtD = cellD1.txt;
-        ctrl.t2BgF = cellF1.bg; ctrl.t2TxtF = cellF1.txt;
-        ctrl.t2BgG = cellG1.bg; ctrl.t2TxtG = cellG1.txt;
-        ctrl.t2BgJ = cellJ1.bg; ctrl.t2TxtJ = cellJ1.txt;
-        ctrl.t2BgK = cellK1.bg; ctrl.t2TxtK = cellK1.txt;
-        ctrl.t2BgL = cellL1.bg; ctrl.t2TxtL = cellL1.txt;
-
-        Space(parent, 4);
-        Lbl(parent, "T2Note", "Δm = Δm₁ = 0.1 г   |   Δg = 0.01 м/с²",
-            10, false, TEXT_DIM, 14);
+        var r1 = TableRow(parent, 30);
+        var cD1  = DataCell(r1, m,   TEXT_WHITE);
+        var cDM  = DataCell(r1, dm,  TEXT_DIM);
+        var cF1  = DataCell(r1, m1,  TEXT_WHITE);
+        var cDM1 = DataCell(r1, dm1, TEXT_DIM);
+        var cG1  = DataCell(r1, g,   TEXT_WHITE);
+        var cDG  = DataCell(r1, dg,  TEXT_DIM);
+        var cJ1  = DataCell(r1, a,   TEXT_WHITE);
+        var cK1  = DataCell(r1, da,  TEXT_WHITE);
+        var cL1  = DataCell(r1, ep,  TEXT_WHITE);
+        ctrl.t2BgD  = cD1.bg;  ctrl.t2TxtD  = cD1.txt;
+        ctrl.t2TxtDM  = cDM.txt;
+        ctrl.t2BgF  = cF1.bg;  ctrl.t2TxtF  = cF1.txt;
+        ctrl.t2TxtDM1 = cDM1.txt;
+        ctrl.t2BgG  = cG1.bg;  ctrl.t2TxtG  = cG1.txt;
+        ctrl.t2TxtDG  = cDG.txt;
+        ctrl.t2BgJ  = cJ1.bg;  ctrl.t2TxtJ  = cJ1.txt;
+        ctrl.t2BgK  = cK1.bg;  ctrl.t2TxtK  = cK1.txt;
+        ctrl.t2BgL  = cL1.bg;  ctrl.t2TxtL  = cL1.txt;
     }
 
     // ── Hint row — 10% of dialog height ──────────────────────────────────────
@@ -519,7 +561,7 @@ public static class AtwoodLabBootstrap
         var tgo = Go(go, "T");
         Stretch(tgo);
         var t = tgo.AddComponent<TextMeshProUGUI>();
-        t.text = text; t.fontSize = 13;
+        t.text = text; t.fontSize = 10;
         t.fontStyle = FontStyles.Bold;
         t.alignment = TextAlignmentOptions.Center;
         t.color = TEXT_ACCENT;
@@ -534,7 +576,7 @@ public static class AtwoodLabBootstrap
         var tgo = Go(go, "T");
         Stretch(tgo);
         var t = tgo.AddComponent<TextMeshProUGUI>();
-        t.text = ""; t.fontSize = 15;
+        t.text = ""; t.fontSize = 11;
         t.alignment = TextAlignmentOptions.Center;
         t.color = textColor;
         return new CellRef { bg = img, txt = t };
