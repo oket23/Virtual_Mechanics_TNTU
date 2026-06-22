@@ -156,36 +156,36 @@ public class AtwoodLabController : MonoBehaviour
     {
         allSteps = new Step[]
         {
-            Stp("A1", true,  "Вимірювання S₁  (1 з 3)",
-                $"S₁ — малий шлях.  ΔS = {data.s1SysError:F1} мм.  Округліть до 0.5 мм"),
-            Stp("A2", true,  "Вимірювання S₁  (2 з 3)",
-                $"S₁ — малий шлях.  ΔS = {data.s1SysError:F1} мм.  Округліть до 0.5 мм"),
-            Stp("A3", true,  "Вимірювання S₁  (3 з 3)",
-                $"S₁ — малий шлях.  ΔS = {data.s1SysError:F1} мм.  Округліть до 0.5 мм"),
-            Stp("B1", true,  "Вимірювання S₂",
-                $"S₂ — повний шлях.  ΔS = {data.s2SysError:F1} мм.  Округліть до 0.5 мм"),
-            Stp("C1", true,  "Вимірювання t₂  (1 з 3)",
-                $"t₂ — час руху.  Δt = {data.t2SysError:F4} с.  Округліть до 4 знаків"),
-            Stp("C2", true,  "Вимірювання t₂  (2 з 3)",
-                $"t₂ — час руху.  Δt = {data.t2SysError:F4} с.  Округліть до 4 знаків"),
-            Stp("C3", true,  "Вимірювання t₂  (3 з 3)",
-                $"t₂ — час руху.  Δt = {data.t2SysError:F4} с.  Округліть до 4 знаків"),
+            Stp("A1", true,  "Вимірювання S<sub>1</sub>  (1 з 3)",
+                $"S<sub>1</sub> — малий шлях.  ΔS<sub>1</sub> = {data.s1SysError:F1} мм.  Округліть до 0.5 мм"),
+            Stp("A2", true,  "Вимірювання S<sub>1</sub>  (2 з 3)",
+                $"S<sub>1</sub> — малий шлях.  ΔS<sub>1</sub> = {data.s1SysError:F1} мм.  Округліть до 0.5 мм"),
+            Stp("A3", true,  "Вимірювання S<sub>1</sub>  (3 з 3)",
+                $"S<sub>1</sub> — малий шлях.  ΔS<sub>1</sub> = {data.s1SysError:F1} мм.  Округліть до 0.5 мм"),
+            Stp("B1", true,  "Вимірювання S<sub>2</sub>",
+                $"S<sub>2</sub> — повний шлях.  ΔS<sub>2</sub> = {data.s2SysError:F1} мм.  Округліть до 0.5 мм"),
+            Stp("C1", true,  "Вимірювання t<sub>2</sub>  (1 з 3)",
+                $"t<sub>2</sub> — час руху.  Δt<sub>2</sub> = {data.t2SysError:F4} с.  Округліть до 4 знаків"),
+            Stp("C2", true,  "Вимірювання t<sub>2</sub>  (2 з 3)",
+                $"t<sub>2</sub> — час руху.  Δt<sub>2</sub> = {data.t2SysError:F4} с.  Округліть до 4 знаків"),
+            Stp("C3", true,  "Вимірювання t<sub>2</sub>  (3 з 3)",
+                $"t<sub>2</sub> — час руху.  Δt<sub>2</sub> = {data.t2SysError:F4} с.  Округліть до 4 знаків"),
             Stp("E1", false, "Обчислення ā — Таблиця 1",
-                "ā = S₂² / (2·S₁сер·t₂сер²)   |   S — у метрах, t — у секундах"),
+                "ā = S<sub>2</sub><sup>2</sup> / (2·S<sub>1сер</sub>·t<sub>2сер</sub><sup>2</sup>)   |   S — у метрах, t — у секундах"),
             Stp("I1", false, "Обчислення ε — Таблиця 1",
-                "ε(%) = (2·ΔS₂/S₂ + ΔS₁/S₁ + 2·Δt₂/t₂сер)·100   |   S у метрах"),
+                "ε(%) = (2·ΔS<sub>2</sub>/S<sub>2</sub> + ΔS<sub>1</sub>/S<sub>1</sub> + 2·Δt<sub>2</sub>/t<sub>2сер</sub>)·100   |   S у метрах"),
             Stp("H1", false, "Обчислення Δā — Таблиця 1",
                 "Δā = ā · ε / 100   |   ā та ε вже введені вище"),
             Stp("D1", false, "Введення m — Таблиця 2",
                 $"Маса тягарця  m = {data.massM:F1} г"),
-            Stp("F1", false, "Введення m₁ — Таблиця 2",
-                $"Маса перевантаження  m₁ = {data.massM1:F1} г"),
+            Stp("F1", false, "Введення m<sub>1</sub> — Таблиця 2",
+                $"Маса перевантаження  m<sub>1</sub> = {data.massM1:F1} г"),
             Stp("G1", false, "Введення g — Таблиця 2",
-                $"Прискорення вільного падіння  g = {data.gravG:F2} м/с²"),
+                $"Прискорення вільного падіння  g = {data.gravG:F2} м/с<sup>2</sup>"),
             Stp("J1", false, "Обчислення ā — Таблиця 2",
-                "ā = m₁·g / (2m + m₁)   |   m у кілограмах"),
+                "ā = m<sub>1</sub>·g / (2m + m<sub>1</sub>)   |   m у кілограмах"),
             Stp("L1", false, "Обчислення ε — Таблиця 2",
-                "ε(%) = (Δm₁·2m/(m₁·(2m+m₁)) + Δg/g + 2·Δm/(2m+m₁))·100"),
+                "ε(%) = (Δm<sub>1</sub>·2m/(m<sub>1</sub>·(2m+m<sub>1</sub>)) + Δg/g + 2·Δm/(2m+m<sub>1</sub>))·100"),
             Stp("K1", false, "Обчислення Δā — Таблиця 2",
                 "Δā = ā · ε / 100   |   ā та ε вже введені вище"),
         };
@@ -284,21 +284,21 @@ public class AtwoodLabController : MonoBehaviour
         {
             case 'A':
                 return
-                    $"Вимірювання малого шляху S₁\n\n" +
+                    $"Вимірювання малого шляху S<sub>1</sub>\n\n" +
                     $"Діапазон: {data.s1Min:F1} – {data.s1Max:F1} мм\n" +
-                    $"Систематична похибка:  ΔS₁ = {data.s1SysError:F1} мм\n" +
+                    $"Систематична похибка:  ΔS<sub>1</sub> = {data.s1SysError:F1} мм\n" +
                     "Одиниці запису: мм";
             case 'B':
                 return
-                    $"Вимірювання повного шляху S₂\n\n" +
+                    $"Вимірювання повного шляху S<sub>2</sub>\n\n" +
                     $"Діапазон: {data.s2Min:F1} – {data.s2Max:F1} мм\n" +
-                    $"Систематична похибка:  ΔS₂ = {data.s2SysError:F1} мм\n" +
+                    $"Систематична похибка:  ΔS<sub>2</sub> = {data.s2SysError:F1} мм\n" +
                     "Одиниці запису: мм";
             case 'C':
                 return
-                    $"Вимірювання часу t₂\n\n" +
+                    $"Вимірювання часу t<sub>2</sub>\n\n" +
                     $"Діапазон: {data.t2Min:F4} – {data.t2Max:F4} с\n" +
-                    $"Систематична похибка:  Δt₂ = {data.t2SysError:F4} с\n" +
+                    $"Систематична похибка:  Δt<sub>2</sub> = {data.t2SysError:F4} с\n" +
                     "Одиниці запису: с";
             case 'D':
                 return $"Маса тягарця\n\nm = {data.massM:F1} г\n\nОдиниці запису: г";
@@ -307,35 +307,35 @@ public class AtwoodLabController : MonoBehaviour
                 float s1m = S1Avg() / 1000f, s2m = valB / 1000f, t2 = T2Avg();
                 return
                     "Дослідне прискорення  ā (Таблиця 1)\n\n" +
-                    "Формула:  ā = S₂² / (2·S₁сер·t₂сер²)\n\n" +
-                    $"S₁сер = {S1Avg():F2} мм = {s1m:F5} м\n" +
-                    $"S₂    = {valB:F2} мм = {s2m:F5} м\n" +
-                    $"t₂сер = {T2Avg():F4} с\n\n" +
-                    "Одиниці: м/с²";
+                    "Формула:  ā = S<sub>2</sub><sup>2</sup> / (2·S<sub>1сер</sub>·t<sub>2сер</sub><sup>2</sup>)\n\n" +
+                    $"S<sub>1сер</sub> = {S1Avg():F2} мм = {s1m:F5} м\n" +
+                    $"S<sub>2</sub>    = {valB:F2} мм = {s2m:F5} м\n" +
+                    $"t<sub>2сер</sub> = {T2Avg():F4} с\n\n" +
+                    "Одиниці: м/с<sup>2</sup>";
             }
             case 'F':
-                return $"Маса перевантаження\n\nm₁ = {data.massM1:F1} г\n\nОдиниці запису: г";
+                return $"Маса перевантаження\n\nm<sub>1</sub> = {data.massM1:F1} г\n\nОдиниці запису: г";
             case 'G':
-                return $"Прискорення вільного падіння\n\ng = {data.gravG:F2} м/с²\n\nОдиниці запису: м/с²";
+                return $"Прискорення вільного падіння\n\ng = {data.gravG:F2} м/с<sup>2</sup>\n\nОдиниці запису: м/с<sup>2</sup>";
             case 'H':
             {
                 float[] t1 = CalcTable1();
                 return
                     "Абсолютна похибка  Δā (Таблиця 1)\n\n" +
                     "Формула:  Δā = ā · ε / 100\n\n" +
-                    $"ā  = {t1[0]:F4} м/с²\n" +
+                    $"ā  = {t1[0]:F4} м/с<sup>2</sup>\n" +
                     $"ε  = {t1[2]:F2} %\n\n" +
-                    "Одиниці: м/с²";
+                    "Одиниці: м/с<sup>2</sup>";
             }
             case 'I':
             {
                 float s1m = S1Avg()/1000f, s2m = valB/1000f, t2 = T2Avg();
                 return
                     "Відносна похибка  ε% (Таблиця 1)\n\n" +
-                    "ε = (2·ΔS₂/S₂ + ΔS₁/S₁ + 2·Δt₂/t₂сер)·100\n\n" +
-                    $"ΔS₁={data.s1SysError/1000f:F4} м,  S₁={s1m:F5} м\n" +
-                    $"ΔS₂={data.s2SysError/1000f:F4} м,  S₂={s2m:F5} м\n" +
-                    $"Δt₂={data.t2SysError:F4} с,  t₂={t2:F4} с\n\n" +
+                    "ε = (2·ΔS<sub>2</sub>/S<sub>2</sub> + ΔS<sub>1</sub>/S<sub>1</sub> + 2·Δt<sub>2</sub>/t<sub>2сер</sub>)·100\n\n" +
+                    $"ΔS<sub>1</sub>={data.s1SysError/1000f:F4} м,  S<sub>1</sub>={s1m:F5} м\n" +
+                    $"ΔS<sub>2</sub>={data.s2SysError/1000f:F4} м,  S<sub>2</sub>={s2m:F5} м\n" +
+                    $"Δt<sub>2</sub>={data.t2SysError:F4} с,  t<sub>2</sub>={t2:F4} с\n\n" +
                     "Одиниці: %";
             }
             case 'J':
@@ -343,11 +343,11 @@ public class AtwoodLabController : MonoBehaviour
                 float m = data.massM/1000f, m1 = data.massM1/1000f;
                 return
                     "Теоретичне прискорення  ā (Таблиця 2)\n\n" +
-                    "Формула:  ā = m₁·g / (2m + m₁)\n\n" +
+                    "Формула:  ā = m<sub>1</sub>·g / (2m + m<sub>1</sub>)\n\n" +
                     $"m  = {data.massM:F1} г = {m:F4} кг\n" +
-                    $"m₁ = {data.massM1:F1} г = {m1:F4} кг\n" +
-                    $"g  = {data.gravG:F2} м/с²\n\n" +
-                    "Одиниці: м/с²";
+                    $"m<sub>1</sub> = {data.massM1:F1} г = {m1:F4} кг\n" +
+                    $"g  = {data.gravG:F2} м/с<sup>2</sup>\n\n" +
+                    "Одиниці: м/с<sup>2</sup>";
             }
             case 'K':
             {
@@ -355,9 +355,9 @@ public class AtwoodLabController : MonoBehaviour
                 return
                     "Абсолютна похибка  Δā (Таблиця 2)\n\n" +
                     "Формула:  Δā = ā · ε / 100\n\n" +
-                    $"ā  = {t2[0]:F4} м/с²\n" +
+                    $"ā  = {t2[0]:F4} м/с<sup>2</sup>\n" +
                     $"ε  = {t2[2]:F2} %\n\n" +
-                    "Одиниці: м/с²";
+                    "Одиниці: м/с<sup>2</sup>";
             }
             case 'L':
             {
@@ -365,9 +365,9 @@ public class AtwoodLabController : MonoBehaviour
                 float dm = 0.00005f, dm1 = 0.0005f, dg = 0.005f;
                 return
                     "Відносна похибка  ε% (Таблиця 2)\n\n" +
-                    "ε = (Δm₁·2m/(m₁·(2m+m₁)) + Δg/g + 2·Δm/(2m+m₁))·100\n\n" +
-                    $"Δm={dm:F4} кг,  Δm₁={dm1:F4} кг,  Δg={dg:F2} м/с²\n" +
-                    $"m={m:F4} кг,  m₁={m1:F4} кг,  g={data.gravG:F2}\n\n" +
+                    "ε = (Δm<sub>1</sub>·2m/(m<sub>1</sub>·(2m+m<sub>1</sub>)) + Δg/g + 2·Δm/(2m+m<sub>1</sub>))·100\n\n" +
+                    $"Δm={dm:F4} кг,  Δm<sub>1</sub>={dm1:F4} кг,  Δg={dg:F2} м/с<sup>2</sup>\n" +
+                    $"m={m:F4} кг,  m<sub>1</sub>={m1:F4} кг,  g={data.gravG:F2}\n\n" +
                     "Одиниці: %";
             }
             default: return "";
@@ -602,8 +602,8 @@ public class AtwoodLabController : MonoBehaviour
 
         conclusionText.text =
             "Лабораторна робота №2 виконана!\n\n" +
-            $"Дослідне прискорення (Табл. 1):     ā₁ = {a1:F4} м/с²\n" +
-            $"Теоретичне прискорення (Табл. 2):   ā₂ = {a2:F4} м/с²\n\n" +
+            $"Дослідне прискорення (Табл. 1):     ā<sub>1</sub> = {a1:F4} м/с<sup>2</sup>\n" +
+            $"Теоретичне прискорення (Табл. 2):   ā<sub>2</sub> = {a2:F4} м/с<sup>2</sup>\n\n" +
             $"Відносне розходження:  {diff:F1}%\n\n" +
             (diff < 10f
                 ? "Другий закон Ньютона підтверджено в межах похибки вимірювань."

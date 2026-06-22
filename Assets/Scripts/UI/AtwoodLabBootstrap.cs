@@ -123,7 +123,10 @@ public static class AtwoodLabBootstrap
         hdr.AddComponent<LayoutElement>().flexibleHeight = 1;  // 10% share
         hdr.AddComponent<Image>().color = BG_HEADER;
         var hlg = hdr.AddComponent<HorizontalLayoutGroup>();
-        hlg.padding              = new RectOffset(12, 4, 0, 0);
+        
+        // СТАЛО: Додали відступи 12 пікселів зверху і знизу (було 0). 
+        // Це "стисне" кнопку по висоті і вона не буде виглядати як гігантська цеглина.
+        hlg.padding              = new RectOffset(16, 16, 12, 12); 
         hlg.spacing              = 4;
         hlg.childControlWidth    = true;
         hlg.childControlHeight   = true;
@@ -134,26 +137,27 @@ public static class AtwoodLabBootstrap
         titleGO.AddComponent<LayoutElement>().flexibleWidth = 1;
         var t = titleGO.AddComponent<TextMeshProUGUI>();
         t.text      = "ЛАБОРАТОРНА РОБОТА №2  —  МАШИНА АТВУДА";
-        t.fontSize  = 13;
+        t.fontSize  = 16; // Трохи збільшимо і назву лаби для балансу
         t.fontStyle = FontStyles.Bold;
         t.alignment = TextAlignmentOptions.MidlineLeft;
         t.color     = TEXT_ACCENT;
 
         var closeGO = Go(hdr, "CloseBtn");
-        closeGO.AddComponent<LayoutElement>().preferredWidth = 80;
+        closeGO.AddComponent<LayoutElement>().preferredWidth = 110; // Зробили трохи ширшою
         closeGO.AddComponent<Image>().color = BTN_RED;
         var closeBtn = closeGO.AddComponent<Button>();
         SetBtnColors(closeBtn, BTN_RED);
-        BtnLabel(closeGO, "✕  Закрити", 11f);
+        BtnLabel(closeGO, "✕  Закрити", 14f); // Збільшили шрифт на кнопці (було 11)
         return closeBtn;
     }
 
     // ── Left panel ────────────────────────────────────────────────────────────
+// ── Left panel ────────────────────────────────────────────────────────────
     static void BuildLeft(GameObject parent, AtwoodLabController ctrl)
     {
         var left = VPanel(parent, "LeftPanel", 18f, BG_PANEL);
 
-        Lbl(left, "Title",  "МАШИНА АТВУДА",        14, true,  TEXT_ACCENT, 22);
+        Lbl(left, "Title",  "МАШИНА АТВУДА", 18, true,  TEXT_ACCENT, 22);
         Divider(left);
         Space(left, 6);
 
@@ -165,24 +169,24 @@ public static class AtwoodLabBootstrap
 
         Divider(left);
         Space(left, 6);
-        Lbl(left, "FmLbl", "ФОРМУЛИ", 12, true, TEXT_ACCENT, 18);
+        Lbl(left, "FmLbl", "ФОРМУЛИ", 14, true, TEXT_ACCENT, 18);
         Space(left, 4);
-        Lbl(left, "Fm1", "Дослідне:\na = S2^2/(2*S1*t2^2)", 12, false, TEXT_WHITE, 38);
+        Lbl(left, "Fm1", "Дослідне:\na = S<sub>2</sub><sup>2</sup> / (2·S<sub>1сер</sub>·t<sub>2сер</sub><sup>2</sup>)", 18, false, TEXT_WHITE, 46);
         Space(left, 6);
-        Lbl(left, "Fm2", "Теоретичне:\na = m1*g/(2m+m1)",    12, false, TEXT_WHITE, 38);
+        Lbl(left, "Fm2", "Теоретичне:\na = m<sub>1</sub>·g / (2m + m<sub>1</sub>)",    18, false, TEXT_WHITE, 46);
         Divider(left);
         Space(left, 6);
-        Lbl(left, "ErrLbl", "СИСТЕМ. ПОХИБКИ",     11, true,  TEXT_ACCENT, 16);
+        Lbl(left, "ErrLbl", "СИСТЕМ. ПОХИБКИ",     14, true,  TEXT_ACCENT, 16);
         Space(left, 4);
-        Lbl(left, "ErrS",  "DS = 0.5 мм",          12, false, TEXT_DIM,    18);
-        Lbl(left, "ErrT",  "Dt = 0.0005 с",         12, false, TEXT_DIM,    18);
-        Lbl(left, "ErrM",  "Dm = 0.1 г",            12, false, TEXT_DIM,    18);
+        Lbl(left, "ErrS",  "DS = 0.5 мм",          14, false, TEXT_DIM,    18);
+        Lbl(left, "ErrT",  "Dt = 0.0005 с",         14, false, TEXT_DIM,    18);
+        Lbl(left, "ErrM",  "Dm = 0.1 г",            14, false, TEXT_DIM,    18);
     }
 
     // ── Center panel ──────────────────────────────────────────────────────────
     static void BuildCenter(GameObject parent, AtwoodLabController ctrl)
     {
-        var center = VPanel(parent, "CenterPanel", 45f, BG_PANEL);
+        var center = VPanel(parent, "CenterPanel", 32f, BG_PANEL);
 
         // Phase title
         var titleGO = Go(center, "PhaseTitle");
@@ -215,7 +219,7 @@ public static class AtwoodLabBootstrap
         var optLabels = new TMP_Text[4];
         for (int i = 0; i < 4; i++)
         {
-            optBtns[i]   = BtnH(panel, $"Opt{i}", $"Варіант {i + 1}", BTN_QUIZ, 50, 13);
+            optBtns[i]   = BtnH(panel, $"Opt{i}", $"Варіант {i + 1}", BTN_QUIZ, 50, 16);
             optLabels[i] = optBtns[i].GetComponentInChildren<TMP_Text>();
             if (i < 3) Space(panel, 4);
         }
@@ -339,7 +343,7 @@ public static class AtwoodLabBootstrap
     // ── Right panel (tables) ──────────────────────────────────────────────────
     static void BuildRight(GameObject parent, AtwoodLabController ctrl)
     {
-        var right = VPanel(parent, "RightPanel", 37f, BG_PANEL);
+        var right = VPanel(parent, "RightPanel", 50f, BG_PANEL);
 
         BuildTable1(right, ctrl);
         Space(right, 10);
@@ -358,17 +362,17 @@ public static class AtwoodLabBootstrap
         float n=0.30f, s1=1.2f, ds1=1.0f, s2=1.2f, ds2=1.0f, t2=1.3f, dt2=1.0f,
               a=1.3f, da=1.3f, ep=1.0f;
 
-        // Header row (Змінено порядок, одиниці та назву a1)
+        // Header row 
         var hdr = TableRow(parent, 26);
         SetHdrCell(hdr, n,   "№");
-        SetHdrCell(hdr, s1,  "S₁\n(10⁻³ м)");
-        SetHdrCell(hdr, ds1, "ΔS₁\n(10⁻³ м)");
-        SetHdrCell(hdr, s2,  "S₂\n(10⁻³ м)");
-        SetHdrCell(hdr, ds2, "ΔS₂\n(10⁻³ м)");
-        SetHdrCell(hdr, t2,  "t₂\n(с)");
-        SetHdrCell(hdr, dt2, "Δt₂\n(с)");
-        SetHdrCell(hdr, a,   "a₁\n(м/с²)");
-        SetHdrCell(hdr, da,  "Δa₁\n(м/с²)");
+        SetHdrCell(hdr, s1,  "S<sub>1</sub>\n(10<sup>-3</sup> м)");
+        SetHdrCell(hdr, ds1, "ΔS<sub>1</sub>\n(10<sup>-3</sup> м)");
+        SetHdrCell(hdr, s2,  "S<sub>2</sub>\n(10<sup>-3</sup> м)");
+        SetHdrCell(hdr, ds2, "ΔS<sub>2</sub>\n(10<sup>-3</sup> м)");
+        SetHdrCell(hdr, t2,  "t<sub>2</sub>\n(с)");
+        SetHdrCell(hdr, dt2, "Δt<sub>2</sub>\n(с)");
+        SetHdrCell(hdr, a,   "a<sub>1</sub>\n(м/с<sup>2</sup>)");
+        SetHdrCell(hdr, da,  "Δa<sub>1</sub>\n(м/с<sup>2</sup>)");
         SetHdrCell(hdr, ep,  "ε\n(%)");
 
         Space(parent, 1);
@@ -466,16 +470,16 @@ public static class AtwoodLabBootstrap
         float m=1.2f, dm=1.0f, m1=1.2f, dm1=1.0f, g=1.3f, dg=1.0f,
               a=1.3f, da=1.3f, ep=1.0f;
 
-        // Header (Змінено одиниці та назву a)
+        // Header
         var hdr = TableRow(parent, 26);
-        SetHdrCell(hdr, m,   "m\n(10⁻³ кг)");
-        SetHdrCell(hdr, dm,  "Δm\n(10⁻³ кг)");
-        SetHdrCell(hdr, m1,  "m₁\n(10⁻³ кг)");
-        SetHdrCell(hdr, dm1, "Δm₁\n(10⁻³ кг)");
-        SetHdrCell(hdr, g,   "g\n(м/с²)");
-        SetHdrCell(hdr, dg,  "Δg\n(м/с²)");
-        SetHdrCell(hdr, a,   "a\n(м/с²)");
-        SetHdrCell(hdr, da,  "Δa\n(м/с²)");
+        SetHdrCell(hdr, m,   "m\n(10<sup>-3</sup> кг)");
+        SetHdrCell(hdr, dm,  "Δm\n(10<sup>-3</sup> кг)");
+        SetHdrCell(hdr, m1,  "m<sub>1</sub>\n(10<sup>-3</sup> кг)");
+        SetHdrCell(hdr, dm1, "Δm<sub>1</sub>\n(10<sup>-3</sup> кг)");
+        SetHdrCell(hdr, g,   "g\n(м/с<sup>2</sup>)");
+        SetHdrCell(hdr, dg,  "Δg\n(м/с<sup>2</sup>)");
+        SetHdrCell(hdr, a,   "a\n(м/с<sup>2</sup>)");
+        SetHdrCell(hdr, da,  "Δa\n(м/с<sup>2</sup>)");
         SetHdrCell(hdr, ep,  "ε\n(%)");
 
         Space(parent, 1);
@@ -503,7 +507,7 @@ public static class AtwoodLabBootstrap
         ctrl.t2BgL  = cL1.bg;  ctrl.t2TxtL  = cL1.txt;
     }
 
-    // ── Hint row — 10% of dialog height ──────────────────────────────────────
+// ── Hint row — 10% of dialog height ──────────────────────────────────────
     static TMP_Text BuildHintRow(GameObject parent)
     {
         var row = Go(parent, "HintRow");
@@ -514,7 +518,7 @@ public static class AtwoodLabBootstrap
         Stretch(tGO);
         var txt = tGO.AddComponent<TextMeshProUGUI>();
         txt.text      = "";
-        txt.fontSize  = 12;
+        txt.fontSize  = 16; // СТАЛО: Збільшили шрифт (було 12)
         txt.alignment = TextAlignmentOptions.Center;
         txt.color     = TEXT_DIM;
         return txt;
@@ -534,11 +538,13 @@ public static class AtwoodLabBootstrap
         hlg.childControlHeight   = true;
         hlg.childForceExpandWidth  = false;
         hlg.childForceExpandHeight = true;
-        FooterText(row, "Lab",  "Лабораторія кіберфізичних систем ТНТУ", 11, TEXT_WHITE);
-        FooterText(row, "Book", "Механіка та молекулярна фізика. Лабораторний практикум", 11, TEXT_WHITE);
+        
+        // СТАЛО: Всюди замінили 11 на 14
+        FooterText(row, "Lab",  "Лабораторія кіберфізичних систем ТНТУ", 14, TEXT_WHITE);
+        FooterText(row, "Book", "Механіка та молекулярна фізика. Лабораторний практикум", 14, TEXT_WHITE);
         Go(row, "Spacer").AddComponent<LayoutElement>().flexibleWidth = 1;
-        FooterText(row, "Date",  $"Дата: {System.DateTime.Now:dd.MM.yyyy}", 11, TEXT_WHITE);
-        FooterText(row, "ExpID", "Дослід №2", 11, TEXT_WHITE);
+        FooterText(row, "Date",  $"Дата: {System.DateTime.Now:dd.MM.yyyy}", 14, TEXT_WHITE);
+        FooterText(row, "ExpID", "Дослід №2", 14, TEXT_WHITE);
     }
 
     // ── Table helpers ─────────────────────────────────────────────────────────
@@ -566,7 +572,7 @@ public static class AtwoodLabBootstrap
         var tgo = Go(go, "T");
         Stretch(tgo);
         var t = tgo.AddComponent<TextMeshProUGUI>();
-        t.text = text; t.fontSize = 10;
+        t.text = text; t.fontSize = 16; 
         t.fontStyle = FontStyles.Bold;
         t.alignment = TextAlignmentOptions.Center;
         t.color = TEXT_ACCENT;
@@ -604,10 +610,15 @@ public static class AtwoodLabBootstrap
         return go;
     }
 
-    static GameObject VPanel(GameObject parent, string name, float flexW, Color? bg = null)
+static GameObject VPanel(GameObject parent, string name, float flexW, Color? bg = null)
     {
         var go = Go(parent, name);
-        go.AddComponent<LayoutElement>().flexibleWidth = flexW;
+        
+        // Зберігаємо посилання на LayoutElement, щоб додати нове правило
+        var le = go.AddComponent<LayoutElement>();
+        le.flexibleWidth = flexW;
+        le.preferredWidth = 0;  // <--- ОСЬ ЦЕЙ РЯДОК ФІКСИТЬ ПРОБЛЕМУ
+        
         if (bg.HasValue) go.AddComponent<Image>().color = bg.Value;
         var v = go.AddComponent<VerticalLayoutGroup>();
         v.padding              = new RectOffset(10, 10, 10, 8);
