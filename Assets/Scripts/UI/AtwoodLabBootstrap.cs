@@ -29,7 +29,7 @@ public static class AtwoodLabBootstrap
 
     static readonly Color CELL_NORMAL  = new Color(0.11f, 0.13f, 0.20f, 1f);
     static readonly Color CELL_HEADER  = new Color(0.14f, 0.18f, 0.28f, 1f);
-    static readonly Color CELL_BORDER  = new Color(0.20f, 0.24f, 0.36f, 1f);
+    static readonly Color CELL_BORDER  = new Color(0.38f, 0.50f, 0.75f, 1f);
 
     // ── Bootstrap ─────────────────────────────────────────────────────────────
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -200,7 +200,7 @@ public static class AtwoodLabBootstrap
     // ── Center panel ──────────────────────────────────────────────────────────
     static void BuildCenter(GameObject parent, AtwoodLabController ctrl)
     {
-        var center = VPanel(parent, "CenterPanel", 32f, BG_PANEL);
+        var center = VPanel(parent, "CenterPanel", 22f, BG_PANEL);
 
         // Phase title
         var titleGO = Go(center, "PhaseTitle");
@@ -226,27 +226,27 @@ public static class AtwoodLabBootstrap
     {
         var panel = SubPanel(parent, "QuizPanel");
 
-        ctrl.quizQText = Lbl(panel, "Q", "", 16, false, TEXT_WHITE, 0, expand: true);
+        ctrl.quizQText = Lbl(panel, "Q", "", 16, false, TEXT_WHITE, 72);
         Space(panel, 8);
 
-        var optBtns   = new Button[4];
-        var optLabels = new TMP_Text[4];
-        for (int i = 0; i < 4; i++)
+        // Multiline answer input
+        var inp = MakeInput(panel, "AnswerInput", "Введіть вашу відповідь тут...", 110,
+            TMP_InputField.ContentType.Standard);
+        inp.lineType = TMP_InputField.LineType.MultiLineNewline;
+        foreach (var t in inp.GetComponentsInChildren<TextMeshProUGUI>())
         {
-            optBtns[i]   = BtnH(panel, $"Opt{i}", $"Варіант {i + 1}", BTN_QUIZ, 50, 16);
-            optLabels[i] = optBtns[i].GetComponentInChildren<TMP_Text>();
-            if (i < 3) Space(panel, 4);
+            t.alignment = TextAlignmentOptions.TopLeft;
+            t.fontSize  = 15f;
         }
-        ctrl.quizOptBtns   = optBtns;
-        ctrl.quizOptLabels = optLabels;
+        ctrl.quizAnswerInput = inp;
 
-        Space(panel, 8);
-        ctrl.quizFeedText = Lbl(panel, "Feed", "", 14, false, TEXT_WHITE, 50);
-        ctrl.quizFeedText.gameObject.SetActive(false);
-        Space(panel, 6);
-        ctrl.quizNextBtn = BtnH(panel, "BtnNext", "Наступне  >>", BTN_BLUE, 42, 14);
-        ctrl.quizNextBtn.gameObject.SetActive(false);
+        Space(panel, 10);
+        ctrl.quizNextBtn = BtnH(panel, "BtnNext", "Далі  >>", BTN_BLUE, 42, 14);
+        ctrl.quizNextBtn.interactable = false;
         ctrl.quizNextLabel = ctrl.quizNextBtn.GetComponentInChildren<TMP_Text>();
+
+        // Розтягувальний відступ — притискає вміст до верху
+        Go(panel, "Filler").AddComponent<LayoutElement>().flexibleHeight = 1;
         return panel;
     }
 
@@ -317,10 +317,10 @@ public static class AtwoodLabBootstrap
 
         // Cell question
         ctrl.measCellQuestionText = Lbl(panel, "CellQ",
-            "В яку клітинку таблиці слід внести це значення?",
+            "В яку клітинку таблиці слід внести це значення (наприклад, А2)?",
             13, false, TEXT_DIM, 18);
         Space(panel, 4);
-        ctrl.measCellInput = MakeInput(panel, "CellInput", "A1", 40,
+        ctrl.measCellInput = MakeInput(panel, "CellInput", "", 40,
             TMP_InputField.ContentType.Alphanumeric);
 
         Space(panel, 6);
@@ -387,12 +387,14 @@ public static class AtwoodLabBootstrap
         Lbl(parent, "T1Title", "ТАБЛИЦЯ 1 — ДОСЛІДНІ ДАНІ", 11, true, TEXT_ACCENT, 18);
         Space(parent, 4);
 
+        var grid = TableGrid(parent);
+
         // column flex weights
         float n=0.30f, s1=1.2f, ds1=1.0f, s2=1.2f, ds2=1.0f, t2=1.3f, dt2=1.0f,
               a=1.3f, da=1.3f, ep=1.0f;
 
-        // Header row 
-        var hdr = TableRow(parent, 26);
+        // Header row
+        var hdr = TableRow(grid, 26);
         SetHdrCell(hdr, n,   "№");
         SetHdrCell(hdr, s1,  "S<sub>1</sub>\n(10<sup>-3</sup> м)");
         SetHdrCell(hdr, ds1, "ΔS<sub>1</sub>\n(10<sup>-3</sup> м)");
@@ -404,90 +406,81 @@ public static class AtwoodLabBootstrap
         SetHdrCell(hdr, da,  "Δa<sub>1</sub>\n(м/с<sup>2</sup>)");
         SetHdrCell(hdr, ep,  "ε\n(%)");
 
-        Space(parent, 1);
-
         // Row 1
-        var r1 = TableRow(parent, 30);
+        var r1 = TableRow(grid, 30);
         DataCell(r1, n,   TEXT_DIM).txt.text = "1";
-        var cA1  = DataCell(r1, s1,  TEXT_WHITE);
+        var cA1    = DataCell(r1, s1,  TEXT_WHITE);
         var cDS1_0 = DataCell(r1, ds1, TEXT_DIM);
-        DataCell(r1, s2,  TEXT_DIM); // Порожня декоративна S2
-        DataCell(r1, ds2, TEXT_DIM); // Порожня декоративна DS2
-        var cC1  = DataCell(r1, t2,  TEXT_WHITE);
+        var cB1    = DataCell(r1, s2,  TEXT_WHITE);
+        DataCell(r1, ds2, TEXT_DIM);
+        var cC1    = DataCell(r1, t2,  TEXT_WHITE);
         var cDT2_0 = DataCell(r1, dt2, TEXT_DIM);
-        DataCell(r1, a,   TEXT_DIM);
-        DataCell(r1, da,  TEXT_DIM);
-        DataCell(r1, ep,  TEXT_DIM);
-        
-        ctrl.t1BgA[0] = cA1.bg; ctrl.t1TxtA[0] = cA1.txt;
+        DataCell(r1, a,  TEXT_DIM);
+        DataCell(r1, da, TEXT_DIM);
+        DataCell(r1, ep, TEXT_DIM);
+        ctrl.t1BgA[0] = cA1.bg;    ctrl.t1TxtA[0]   = cA1.txt;
         ctrl.t1TxtDS1[0] = cDS1_0.txt;
-        ctrl.t1BgC[0] = cC1.bg; ctrl.t1TxtC[0] = cC1.txt;
+        ctrl.t1BgB[0] = cB1.bg;    ctrl.t1TxtB[0]   = cB1.txt;
+        ctrl.t1BgC[0] = cC1.bg;    ctrl.t1TxtC[0]   = cC1.txt;
         ctrl.t1TxtDT2[0] = cDT2_0.txt;
 
-        Space(parent, 1);
-
         // Row 2
-        var r2 = TableRow(parent, 30);
+        var r2 = TableRow(grid, 30);
         DataCell(r2, n,   TEXT_DIM).txt.text = "2";
-        var cA2  = DataCell(r2, s1,  TEXT_WHITE);
+        var cA2    = DataCell(r2, s1,  TEXT_WHITE);
         var cDS1_1 = DataCell(r2, ds1, TEXT_DIM);
-        DataCell(r2, s2,  TEXT_DIM); // Порожня декоративна S2
-        DataCell(r2, ds2, TEXT_DIM); // Порожня декоративна DS2
-        var cC2  = DataCell(r2, t2,  TEXT_WHITE);
+        var cB2    = DataCell(r2, s2,  TEXT_WHITE);
+        DataCell(r2, ds2, TEXT_DIM);
+        var cC2    = DataCell(r2, t2,  TEXT_WHITE);
         var cDT2_1 = DataCell(r2, dt2, TEXT_DIM);
-        DataCell(r2, a,   TEXT_DIM);
-        DataCell(r2, da,  TEXT_DIM);
-        DataCell(r2, ep,  TEXT_DIM);
-        
-        ctrl.t1BgA[1] = cA2.bg; ctrl.t1TxtA[1] = cA2.txt;
+        DataCell(r2, a,  TEXT_DIM);
+        DataCell(r2, da, TEXT_DIM);
+        DataCell(r2, ep, TEXT_DIM);
+        ctrl.t1BgA[1] = cA2.bg;    ctrl.t1TxtA[1]   = cA2.txt;
         ctrl.t1TxtDS1[1] = cDS1_1.txt;
-        ctrl.t1BgC[1] = cC2.bg; ctrl.t1TxtC[1] = cC2.txt;
+        ctrl.t1BgB[1] = cB2.bg;    ctrl.t1TxtB[1]   = cB2.txt;
+        ctrl.t1BgC[1] = cC2.bg;    ctrl.t1TxtC[1]   = cC2.txt;
         ctrl.t1TxtDT2[1] = cDT2_1.txt;
 
-        Space(parent, 1);
-
         // Row 3
-        var r3 = TableRow(parent, 30);
+        var r3 = TableRow(grid, 30);
         DataCell(r3, n,   TEXT_DIM).txt.text = "3";
-        var cA3  = DataCell(r3, s1,  TEXT_WHITE);
+        var cA3    = DataCell(r3, s1,  TEXT_WHITE);
         var cDS1_2 = DataCell(r3, ds1, TEXT_DIM);
-        DataCell(r3, s2,  TEXT_DIM); // Порожня декоративна S2
-        DataCell(r3, ds2, TEXT_DIM); // Порожня декоративна DS2
-        var cC3  = DataCell(r3, t2,  TEXT_WHITE);
+        var cB3    = DataCell(r3, s2,  TEXT_WHITE);
+        DataCell(r3, ds2, TEXT_DIM);
+        var cC3    = DataCell(r3, t2,  TEXT_WHITE);
         var cDT2_2 = DataCell(r3, dt2, TEXT_DIM);
-        DataCell(r3, a,   TEXT_DIM);
-        DataCell(r3, da,  TEXT_DIM);
-        DataCell(r3, ep,  TEXT_DIM);
-        
-        ctrl.t1BgA[2] = cA3.bg; ctrl.t1TxtA[2] = cA3.txt;
+        DataCell(r3, a,  TEXT_DIM);
+        DataCell(r3, da, TEXT_DIM);
+        DataCell(r3, ep, TEXT_DIM);
+        ctrl.t1BgA[2] = cA3.bg;    ctrl.t1TxtA[2]   = cA3.txt;
         ctrl.t1TxtDS1[2] = cDS1_2.txt;
-        ctrl.t1BgC[2] = cC3.bg; ctrl.t1TxtC[2] = cC3.txt;
+        ctrl.t1BgB[2] = cB3.bg;    ctrl.t1TxtB[2]   = cB3.txt;
+        ctrl.t1BgC[2] = cC3.bg;    ctrl.t1TxtC[2]   = cC3.txt;
         ctrl.t1TxtDT2[2] = cDT2_2.txt;
 
-        Space(parent, 1);
-
-        // Сер.Д row
-        var rAvg = TableRow(parent, 30);
+        // Сер. row
+        var rAvg = TableRow(grid, 30);
         DataCell(rAvg, n,   TEXT_DIM).txt.text = "Сер.";
         var cAvgA  = DataCell(rAvg, s1,  TEXT_DIM);
         var cDS1_3 = DataCell(rAvg, ds1, TEXT_DIM);
-        var cB1    = DataCell(rAvg, s2,  TEXT_WHITE);
+        var cAvgB  = DataCell(rAvg, s2,  TEXT_DIM);
         var cDS2   = DataCell(rAvg, ds2, TEXT_DIM);
         var cAvgC  = DataCell(rAvg, t2,  TEXT_DIM);
         var cDT2_3 = DataCell(rAvg, dt2, TEXT_DIM);
         var cE1    = DataCell(rAvg, a,   TEXT_WHITE);
         var cH1    = DataCell(rAvg, da,  TEXT_WHITE);
         var cI1    = DataCell(rAvg, ep,  TEXT_WHITE);
-        
         ctrl.t1TxtAvgA   = cAvgA.txt;
         ctrl.t1TxtDS1[3] = cDS1_3.txt;
-        ctrl.t1BgB       = cB1.bg;  ctrl.t1TxtB = cB1.txt;
+        ctrl.t1TxtAvgB   = cAvgB.txt;
         ctrl.t1TxtDS2    = cDS2.txt;
         ctrl.t1TxtAvgC   = cAvgC.txt;
         ctrl.t1TxtDT2[3] = cDT2_3.txt;
-        ctrl.t1BgE       = cE1.bg;  ctrl.t1TxtE = cE1.txt;
-        ctrl.t1BgH       = cH1.bg;  ctrl.t1TxtH = cH1.txt;
-        ctrl.t1BgI       = cI1.bg;  ctrl.t1TxtI = cI1.txt;
+        ctrl.t1BgE       = cE1.bg;   ctrl.t1TxtE  = cE1.txt;
+        ctrl.t1BgH       = cH1.bg;   ctrl.t1TxtH  = cH1.txt;
+        ctrl.t1BgI       = cI1.bg;   ctrl.t1TxtI  = cI1.txt;
     }
 
     // Table 2: m, Δm, m₁, Δm₁, g, Δg, a, Δa, ε
@@ -496,11 +489,13 @@ public static class AtwoodLabBootstrap
         Lbl(parent, "T2Title", "ТАБЛИЦЯ 2 — ТЕОРЕТИЧНІ ДАНІ", 11, true, TEXT_ACCENT, 18);
         Space(parent, 4);
 
+        var grid = TableGrid(parent);
+
         float m=1.2f, dm=1.0f, m1=1.2f, dm1=1.0f, g=1.3f, dg=1.0f,
               a=1.3f, da=1.3f, ep=1.0f;
 
         // Header
-        var hdr = TableRow(parent, 26);
+        var hdr = TableRow(grid, 26);
         SetHdrCell(hdr, m,   "m\n(10<sup>-3</sup> кг)");
         SetHdrCell(hdr, dm,  "Δm\n(10<sup>-3</sup> кг)");
         SetHdrCell(hdr, m1,  "m<sub>1</sub>\n(10<sup>-3</sup> кг)");
@@ -511,10 +506,8 @@ public static class AtwoodLabBootstrap
         SetHdrCell(hdr, da,  "Δa\n(м/с<sup>2</sup>)");
         SetHdrCell(hdr, ep,  "ε\n(%)");
 
-        Space(parent, 1);
-
         // Single data row
-        var r1 = TableRow(parent, 30);
+        var r1 = TableRow(grid, 30);
         var cD1  = DataCell(r1, m,   TEXT_WHITE);
         var cDM  = DataCell(r1, dm,  TEXT_DIM);
         var cF1  = DataCell(r1, m1,  TEXT_WHITE);
@@ -524,16 +517,15 @@ public static class AtwoodLabBootstrap
         var cJ1  = DataCell(r1, a,   TEXT_WHITE);
         var cK1  = DataCell(r1, da,  TEXT_WHITE);
         var cL1  = DataCell(r1, ep,  TEXT_WHITE);
-        
-        ctrl.t2BgD  = cD1.bg;  ctrl.t2TxtD  = cD1.txt;
+        ctrl.t2BgD   = cD1.bg;  ctrl.t2TxtD   = cD1.txt;
         ctrl.t2TxtDM  = cDM.txt;
-        ctrl.t2BgF  = cF1.bg;  ctrl.t2TxtF  = cF1.txt;
+        ctrl.t2BgF   = cF1.bg;  ctrl.t2TxtF   = cF1.txt;
         ctrl.t2TxtDM1 = cDM1.txt;
-        ctrl.t2BgG  = cG1.bg;  ctrl.t2TxtG  = cG1.txt;
+        ctrl.t2BgG   = cG1.bg;  ctrl.t2TxtG   = cG1.txt;
         ctrl.t2TxtDG  = cDG.txt;
-        ctrl.t2BgJ  = cJ1.bg;  ctrl.t2TxtJ  = cJ1.txt;
-        ctrl.t2BgK  = cK1.bg;  ctrl.t2TxtK  = cK1.txt;
-        ctrl.t2BgL  = cL1.bg;  ctrl.t2TxtL  = cL1.txt;
+        ctrl.t2BgJ   = cJ1.bg;  ctrl.t2TxtJ   = cJ1.txt;
+        ctrl.t2BgK   = cK1.bg;  ctrl.t2TxtK   = cK1.txt;
+        ctrl.t2BgL   = cL1.bg;  ctrl.t2TxtL   = cL1.txt;
     }
 
 // ── Hint row — 10% of dialog height ──────────────────────────────────────
@@ -580,12 +572,26 @@ public static class AtwoodLabBootstrap
 
     struct CellRef { public Image bg; public TMP_Text txt; }
 
+    static GameObject TableGrid(GameObject parent)
+    {
+        var go = Go(parent, "Grid");
+        go.AddComponent<LayoutElement>().flexibleWidth = 1;
+        var v = go.AddComponent<VerticalLayoutGroup>();
+        v.padding                = new RectOffset(0, 0, 0, 0);
+        v.spacing                = 0;
+        v.childControlWidth      = true;
+        v.childControlHeight     = true;
+        v.childForceExpandWidth  = true;
+        v.childForceExpandHeight = false;
+        return go;
+    }
+
     static GameObject TableRow(GameObject parent, int h)
     {
         var row = Go(parent, "Row");
         row.AddComponent<LayoutElement>().preferredHeight = h;
         var hlg = row.AddComponent<HorizontalLayoutGroup>();
-        hlg.spacing              = 1;
+        hlg.spacing              = 0;
         hlg.childControlWidth    = true;
         hlg.childControlHeight   = true;
         hlg.childForceExpandWidth  = true;
@@ -595,13 +601,20 @@ public static class AtwoodLabBootstrap
 
     static void SetHdrCell(GameObject row, float flex, string text)
     {
-        var go = Go(row, "H");
-        go.AddComponent<LayoutElement>().flexibleWidth = flex;
+        var outer = Go(row, "HC");
+        outer.AddComponent<LayoutElement>().flexibleWidth = flex;
+        outer.AddComponent<Image>().color = CELL_BORDER;
+        var pad = outer.AddComponent<VerticalLayoutGroup>();
+        pad.padding = new RectOffset(2, 2, 2, 2);
+        pad.childControlWidth = pad.childControlHeight = true;
+        pad.childForceExpandWidth = pad.childForceExpandHeight = true;
+
+        var go = Go(outer, "H");
         go.AddComponent<Image>().color = CELL_HEADER;
         var tgo = Go(go, "T");
         Stretch(tgo);
         var t = tgo.AddComponent<TextMeshProUGUI>();
-        t.text = text; t.fontSize = 16; 
+        t.text = text; t.fontSize = 14;
         t.fontStyle = FontStyles.Bold;
         t.alignment = TextAlignmentOptions.Center;
         t.color = TEXT_ACCENT;
@@ -609,8 +622,15 @@ public static class AtwoodLabBootstrap
 
     static CellRef DataCell(GameObject row, float flex, Color textColor)
     {
-        var go = Go(row, "D");
-        go.AddComponent<LayoutElement>().flexibleWidth = flex;
+        var outer = Go(row, "DC");
+        outer.AddComponent<LayoutElement>().flexibleWidth = flex;
+        outer.AddComponent<Image>().color = CELL_BORDER;
+        var pad = outer.AddComponent<VerticalLayoutGroup>();
+        pad.padding = new RectOffset(2, 2, 2, 2);
+        pad.childControlWidth = pad.childControlHeight = true;
+        pad.childForceExpandWidth = pad.childForceExpandHeight = true;
+
+        var go = Go(outer, "D");
         var img = go.AddComponent<Image>();
         img.color = CELL_NORMAL;
         var tgo = Go(go, "T");

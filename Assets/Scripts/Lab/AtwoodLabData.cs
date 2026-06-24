@@ -3,23 +3,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "AtwoodLabData", menuName = "Lab/Машина Атвуда")]
 public class AtwoodLabData : ScriptableObject
 {
-    [System.Serializable]
-    public class QuizQuestion
-    {
-        [TextArea(2, 4)] public string question;
-        public string[] options = new string[4];
-        public int correctIndex;
-    }
-
-    [Header("Опитування")]
-    public QuizQuestion[] quizQuestions;
-
-    [Header("S₁ — малий шлях (мм)")]
+    [Header("S₁ — шлях рівноприскореного руху (мм)")]
     public float s1Min      = 118f;
     public float s1Max      = 123f;
     public float s1SysError = 0.5f;
 
-    [Header("S₂ — повний шлях (мм)")]
+    [Header("S₂ — шлях рівномірного руху (мм)")]
     public float s2Min      = 294f;
     public float s2Max      = 302f;
     public float s2SysError = 0.5f;

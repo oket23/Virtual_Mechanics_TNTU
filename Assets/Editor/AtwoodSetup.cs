@@ -148,57 +148,6 @@ public static class AtwoodSetup
         if (tex != null) d.schemeImage = tex;
         else Debug.LogWarning($"[AtwoodSetup] Зображення не знайдено: {imgPath}");
 
-        d.quizQuestions = new AtwoodLabData.QuizQuestion[]
-        {
-            new AtwoodLabData.QuizQuestion
-            {
-                question     = "Що досліджується в лабораторній роботі «Машина Атвуда»?",
-                options      = new[]
-                {
-                    "Рівноприскорений рух та перевірка другого закону Ньютона",
-                    "Закон збереження імпульсу при пружному ударі",
-                    "Коливання математичного маятника",
-                    "Визначення коефіцієнта тертя ковзання"
-                },
-                correctIndex = 0
-            },
-            new AtwoodLabData.QuizQuestion
-            {
-                question     = "Що таке машина Атвуда?",
-                options      = new[]
-                {
-                    "Прилад для вимірювання сили тяжіння",
-                    "Два тягарці однакової маси, з'єднані ниткою через нерухомий блок",
-                    "Пристрій для визначення швидкості звуку",
-                    "Пристрій для визначення коефіцієнта пружності"
-                },
-                correctIndex = 1
-            },
-            new AtwoodLabData.QuizQuestion
-            {
-                question     = "Яка теоретична формула прискорення в машині Атвуда?",
-                options      = new[]
-                {
-                    "ā = m₁ · g / (2m + m₁)",
-                    "ā = S₂² / (2 · S₁ · t₂²)",
-                    "ā = (m₁ + m) · g / 2",
-                    "ā = 2S · g / v²"
-                },
-                correctIndex = 0
-            },
-            new AtwoodLabData.QuizQuestion
-            {
-                question     = "Яка формула розрахунку прискорення за дослідними даними?",
-                options      = new[]
-                {
-                    "ā = S₂ · t₂ / (2 · S₁)",
-                    "ā = S₂² / (2 · S₁ · t₂²)",
-                    "ā = 2 · S₁ / (S₂ · t₂²)",
-                    "ā = (S₂ - S₁) / t₂²"
-                },
-                correctIndex = 1
-            }
-        };
     }
 
     static void EnsureFolders()
