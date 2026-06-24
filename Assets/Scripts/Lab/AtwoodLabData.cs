@@ -11,7 +11,7 @@ public class AtwoodLabData : ScriptableObject
         public int correctIndex;
     }
 
-    [Header("Вікторина")]
+    [Header("Опитування")]
     public QuizQuestion[] quizQuestions;
 
     [Header("S₁ — малий шлях (мм)")]

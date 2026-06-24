@@ -37,6 +37,12 @@ public static class AtwoodLabBootstrap
     {
         UIManager uim = Object.FindFirstObjectByType<UIManager>();
         if (uim == null) return;
+
+        // Гарантуємо правильний tooltip незалежно від стану сцени
+        foreach (var io in Object.FindObjectsByType<InteractableObject>(FindObjectsSortMode.None))
+            if (io.atwoodLabData != null)
+                io.tooltipText = "[E]  Машина Атвуда";
+
         if (uim.atwoodLabController != null) return;
 
         var existing = GameObject.Find("AtwoodLabOverlay");
@@ -178,9 +184,17 @@ public static class AtwoodLabBootstrap
         Space(left, 6);
         Lbl(left, "ErrLbl", "СИСТЕМ. ПОХИБКИ",     14, true,  TEXT_ACCENT, 16);
         Space(left, 4);
-        Lbl(left, "ErrS",  "DS = 0.5 мм",          14, false, TEXT_DIM,    18);
-        Lbl(left, "ErrT",  "Dt = 0.0005 с",         14, false, TEXT_DIM,    18);
-        Lbl(left, "ErrM",  "Dm = 0.1 г",            14, false, TEXT_DIM,    18);
+        Lbl(left, "ErrS",  "ΔS = 0.5 мм",       14, false, TEXT_DIM,    18);
+        Lbl(left, "ErrT",  "Δt = 0.0005 с",    14, false, TEXT_DIM,    18);
+        Lbl(left, "ErrM",  "Δm = 0.1 г",       14, false, TEXT_DIM,    18);
+        Divider(left);
+        Space(left, 6);
+        Lbl(left, "LinksLbl", "ПОСИЛАННЯ", 14, true, TEXT_ACCENT, 16);
+        Space(left, 4);
+        ctrl.linkCpslBtn = BtnH(left, "BtnCpsl", "Лабораторія кіберфізичних систем  >>", BTN_TEAL, 38, 12);
+        Space(left, 4);
+        ctrl.linkBookBtn = BtnH(left, "BtnBook", "Лабораторний практикум  >>",            BTN_TEAL, 38, 12);
+        Space(left, 6);
     }
 
     // ── Center panel ──────────────────────────────────────────────────────────
@@ -344,6 +358,21 @@ public static class AtwoodLabBootstrap
     static void BuildRight(GameObject parent, AtwoodLabController ctrl)
     {
         var right = VPanel(parent, "RightPanel", 50f, BG_PANEL);
+
+        var idRow = Go(right, "ExperimentIdRow");
+        var idLayout = idRow.AddComponent<UnityEngine.UI.HorizontalLayoutGroup>();
+        idLayout.childAlignment         = TextAnchor.MiddleRight;
+        idLayout.childForceExpandWidth  = true;
+        idLayout.childForceExpandHeight = false;
+        idRow.AddComponent<LayoutElement>().preferredHeight = 22;
+        var idTxt = idRow.AddComponent<TextMeshProUGUI>();
+        idTxt.fontSize    = 12f;
+        idTxt.fontStyle   = FontStyles.Bold;
+        idTxt.color       = TEXT_ACCENT;
+        idTxt.alignment   = TextAlignmentOptions.Right;
+        idTxt.text        = "ID: —";
+        ctrl.experimentIdText = idTxt;
+        Space(right, 4);
 
         BuildTable1(right, ctrl);
         Space(right, 10);

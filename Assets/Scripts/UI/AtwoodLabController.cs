@@ -78,6 +78,13 @@ public class AtwoodLabController : MonoBehaviour
     public TMP_Text t2TxtDM1;
     public TMP_Text t2TxtDG;
 
+    // ── Links ─────────────────────────────────────────────────────────────────
+    public Button linkCpslBtn;
+    public Button linkBookBtn;
+
+    // ── Experiment ID ─────────────────────────────────────────────────────────
+    public TMP_Text experimentIdText;
+
     // ── Cell colours ──────────────────────────────────────────────────────────
     static readonly Color CELL_NORMAL = new Color(0.11f, 0.13f, 0.20f, 1f);
     static readonly Color CELL_ACTIVE = new Color(0.80f, 0.45f, 0.05f, 1f);
@@ -122,6 +129,8 @@ public class AtwoodLabController : MonoBehaviour
         measInsertBtn.onClick.AddListener(DoInsert);
         conclusionCloseBtn.onClick.AddListener(Close);
         if (headerCloseBtn) headerCloseBtn.onClick.AddListener(Close);
+        if (linkCpslBtn) linkCpslBtn.onClick.AddListener(() => Application.OpenURL("https://physics.tntu.edu.ua/labs/cpsl/"));
+        if (linkBookBtn) linkBookBtn.onClick.AddListener(() => Application.OpenURL("https://elartu.tntu.edu.ua/handle/lib/50011"));
 
         if (headerCloseBtn) headerCloseBtn.GetComponentInChildren<TMP_Text>().text = "× Закрити";
     }
@@ -144,6 +153,9 @@ public class AtwoodLabController : MonoBehaviour
         ClearAllCells();
         FillPrefilledCells();
 
+        if (experimentIdText != null)
+            experimentIdText.text = "ID: " + GenerateExperimentId();
+
         quizSub = 0;
         if (data.quizQuestions?.Length > 0)
             ToPhase(Phase.Quiz);
@@ -157,19 +169,19 @@ public class AtwoodLabController : MonoBehaviour
         allSteps = new Step[]
         {
             Stp("A1", true,  "Вимірювання S<sub>1</sub>  (1 з 3)",
-                $"S<sub>1</sub> — малий шлях.  ΔS<sub>1</sub> = {data.s1SysError:F1} мм.  Округліть до 0.5 мм"),
+                $"S<sub>1</sub> — малий шлях.  ΔS<sub>1</sub> = {U(data.s1SysError,"F1")} мм.  Округліть до 0,5 мм"),
             Stp("A2", true,  "Вимірювання S<sub>1</sub>  (2 з 3)",
-                $"S<sub>1</sub> — малий шлях.  ΔS<sub>1</sub> = {data.s1SysError:F1} мм.  Округліть до 0.5 мм"),
+                $"S<sub>1</sub> — малий шлях.  ΔS<sub>1</sub> = {U(data.s1SysError,"F1")} мм.  Округліть до 0,5 мм"),
             Stp("A3", true,  "Вимірювання S<sub>1</sub>  (3 з 3)",
-                $"S<sub>1</sub> — малий шлях.  ΔS<sub>1</sub> = {data.s1SysError:F1} мм.  Округліть до 0.5 мм"),
+                $"S<sub>1</sub> — малий шлях.  ΔS<sub>1</sub> = {U(data.s1SysError,"F1")} мм.  Округліть до 0,5 мм"),
             Stp("B1", true,  "Вимірювання S<sub>2</sub>",
-                $"S<sub>2</sub> — повний шлях.  ΔS<sub>2</sub> = {data.s2SysError:F1} мм.  Округліть до 0.5 мм"),
+                $"S<sub>2</sub> — повний шлях.  ΔS<sub>2</sub> = {U(data.s2SysError,"F1")} мм.  Округліть до 0,5 мм"),
             Stp("C1", true,  "Вимірювання t<sub>2</sub>  (1 з 3)",
-                $"t<sub>2</sub> — час руху.  Δt<sub>2</sub> = {data.t2SysError:F4} с.  Округліть до 4 знаків"),
+                $"t<sub>2</sub> — час руху.  Δt<sub>2</sub> = {U(data.t2SysError,"F4")} с.  Округліть до 4 знаків"),
             Stp("C2", true,  "Вимірювання t<sub>2</sub>  (2 з 3)",
-                $"t<sub>2</sub> — час руху.  Δt<sub>2</sub> = {data.t2SysError:F4} с.  Округліть до 4 знаків"),
+                $"t<sub>2</sub> — час руху.  Δt<sub>2</sub> = {U(data.t2SysError,"F4")} с.  Округліть до 4 знаків"),
             Stp("C3", true,  "Вимірювання t<sub>2</sub>  (3 з 3)",
-                $"t<sub>2</sub> — час руху.  Δt<sub>2</sub> = {data.t2SysError:F4} с.  Округліть до 4 знаків"),
+                $"t<sub>2</sub> — час руху.  Δt<sub>2</sub> = {U(data.t2SysError,"F4")} с.  Округліть до 4 знаків"),
             Stp("E1", false, "Обчислення ā — Таблиця 1",
                 "ā = S<sub>2</sub><sup>2</sup> / (2·S<sub>1сер</sub>·t<sub>2сер</sub><sup>2</sup>)   |   S — у метрах, t — у секундах"),
             Stp("I1", false, "Обчислення ε — Таблиця 1",
@@ -177,11 +189,11 @@ public class AtwoodLabController : MonoBehaviour
             Stp("H1", false, "Обчислення Δā — Таблиця 1",
                 "Δā = ā · ε / 100   |   ā та ε вже введені вище"),
             Stp("D1", false, "Введення m — Таблиця 2",
-                $"Маса тягарця  m = {data.massM:F1} г"),
+                $"Маса тягарця  m = {U(data.massM,"F1")} г"),
             Stp("F1", false, "Введення m<sub>1</sub> — Таблиця 2",
-                $"Маса перевантаження  m<sub>1</sub> = {data.massM1:F1} г"),
+                $"Маса перевантаження  m<sub>1</sub> = {U(data.massM1,"F1")} г"),
             Stp("G1", false, "Введення g — Таблиця 2",
-                $"Прискорення вільного падіння  g = {data.gravG:F2} м/с<sup>2</sup>"),
+                $"Прискорення вільного падіння  g = {U(data.gravG,"F2")} м/с<sup>2</sup>"),
             Stp("J1", false, "Обчислення ā — Таблиця 2",
                 "ā = m<sub>1</sub>·g / (2m + m<sub>1</sub>)   |   m у кілограмах"),
             Stp("L1", false, "Обчислення ε — Таблиця 2",
@@ -215,7 +227,7 @@ public class AtwoodLabController : MonoBehaviour
     // ── Quiz ──────────────────────────────────────────────────────────────────
     void ShowQuiz()
     {
-        phaseTitleText.text = $"Вікторина  {quizSub + 1} / {data.quizQuestions.Length}";
+        phaseTitleText.text = $"Опитування  {quizSub + 1} / {data.quizQuestions.Length}";
         hintBarText.text    = "Оберіть одну правильну відповідь";
         var q = data.quizQuestions[quizSub];
         quizQText.text = q.question;
@@ -242,7 +254,7 @@ public class AtwoodLabController : MonoBehaviour
         quizFeedText.gameObject.SetActive(true);
         quizFeedText.text = ok
             ? "<color=#55ff88>Правильно!</color>"
-            : $"<color=#ff6655>Неправильно.</color>  Правильна: {q.options[q.correctIndex]}";
+            : $"<color=#ff6655>Неправильно.</color>  Правильно: {q.options[q.correctIndex]}";
         bool last = quizSub >= data.quizQuestions.Length - 1;
         quizNextBtn.gameObject.SetActive(true);
         quizNextLabel.text = last ? "Розпочати лабораторну  >>" : "Наступне  >>";
@@ -285,46 +297,47 @@ public class AtwoodLabController : MonoBehaviour
             case 'A':
                 return
                     $"Вимірювання малого шляху S<sub>1</sub>\n\n" +
-                    $"Діапазон: {data.s1Min:F1} – {data.s1Max:F1} мм\n" +
-                    $"Систематична похибка:  ΔS<sub>1</sub> = {data.s1SysError:F1} мм\n" +
+                    $"Діапазон: {U(data.s1Min,"F1")} – {U(data.s1Max,"F1")} мм\n" +
+                    $"Систематична похибка:  ΔS<sub>1</sub> = {U(data.s1SysError,"F1")} мм\n" +
                     "Одиниці запису: мм";
             case 'B':
                 return
                     $"Вимірювання повного шляху S<sub>2</sub>\n\n" +
-                    $"Діапазон: {data.s2Min:F1} – {data.s2Max:F1} мм\n" +
-                    $"Систематична похибка:  ΔS<sub>2</sub> = {data.s2SysError:F1} мм\n" +
+                    $"Діапазон: {U(data.s2Min,"F1")} – {U(data.s2Max,"F1")} мм\n" +
+                    $"Систематична похибка:  ΔS<sub>2</sub> = {U(data.s2SysError,"F1")} мм\n" +
                     "Одиниці запису: мм";
             case 'C':
                 return
                     $"Вимірювання часу t<sub>2</sub>\n\n" +
-                    $"Діапазон: {data.t2Min:F4} – {data.t2Max:F4} с\n" +
-                    $"Систематична похибка:  Δt<sub>2</sub> = {data.t2SysError:F4} с\n" +
+                    $"Діапазон: {U(data.t2Min,"F4")} – {U(data.t2Max,"F4")} с\n" +
+                    $"Систематична похибка:  Δt<sub>2</sub> = {U(data.t2SysError,"F4")} с\n" +
+                    "Округліть до 4 знаків після коми.\n" +
                     "Одиниці запису: с";
             case 'D':
-                return $"Маса тягарця\n\nm = {data.massM:F1} г\n\nОдиниці запису: г";
+                return $"Маса тягарця\n\nm = {U(data.massM,"F1")} г\n\nОдиниці запису: г";
             case 'E':
             {
                 float s1m = S1Avg() / 1000f, s2m = valB / 1000f, t2 = T2Avg();
                 return
                     "Дослідне прискорення  ā (Таблиця 1)\n\n" +
                     "Формула:  ā = S<sub>2</sub><sup>2</sup> / (2·S<sub>1сер</sub>·t<sub>2сер</sub><sup>2</sup>)\n\n" +
-                    $"S<sub>1сер</sub> = {S1Avg():F2} мм = {s1m:F5} м\n" +
-                    $"S<sub>2</sub>    = {valB:F2} мм = {s2m:F5} м\n" +
-                    $"t<sub>2сер</sub> = {T2Avg():F4} с\n\n" +
+                    $"S<sub>1сер</sub> = {U(S1Avg(),"F2")} мм = {U(s1m,"F5")} м\n" +
+                    $"S<sub>2</sub>    = {U(valB,"F2")} мм = {U(s2m,"F5")} м\n" +
+                    $"t<sub>2сер</sub> = {U(T2Avg(),"F4")} с\n\n" +
                     "Одиниці: м/с<sup>2</sup>";
             }
             case 'F':
-                return $"Маса перевантаження\n\nm<sub>1</sub> = {data.massM1:F1} г\n\nОдиниці запису: г";
+                return $"Маса перевантаження\n\nm<sub>1</sub> = {U(data.massM1,"F1")} г\n\nОдиниці запису: г";
             case 'G':
-                return $"Прискорення вільного падіння\n\ng = {data.gravG:F2} м/с<sup>2</sup>\n\nОдиниці запису: м/с<sup>2</sup>";
+                return $"Прискорення вільного падіння\n\ng = {U(data.gravG,"F2")} м/с<sup>2</sup>\n\nОдиниці запису: м/с<sup>2</sup>";
             case 'H':
             {
                 float[] t1 = CalcTable1();
                 return
                     "Абсолютна похибка  Δā (Таблиця 1)\n\n" +
                     "Формула:  Δā = ā · ε / 100\n\n" +
-                    $"ā  = {t1[0]:F4} м/с<sup>2</sup>\n" +
-                    $"ε  = {t1[2]:F2} %\n\n" +
+                    $"ā  = {U(t1[0],"F4")} м/с<sup>2</sup>\n" +
+                    $"ε  = {U(t1[2],"F2")} %\n\n" +
                     "Одиниці: м/с<sup>2</sup>";
             }
             case 'I':
@@ -333,9 +346,9 @@ public class AtwoodLabController : MonoBehaviour
                 return
                     "Відносна похибка  ε% (Таблиця 1)\n\n" +
                     "ε = (2·ΔS<sub>2</sub>/S<sub>2</sub> + ΔS<sub>1</sub>/S<sub>1</sub> + 2·Δt<sub>2</sub>/t<sub>2сер</sub>)·100\n\n" +
-                    $"ΔS<sub>1</sub>={data.s1SysError/1000f:F4} м,  S<sub>1</sub>={s1m:F5} м\n" +
-                    $"ΔS<sub>2</sub>={data.s2SysError/1000f:F4} м,  S<sub>2</sub>={s2m:F5} м\n" +
-                    $"Δt<sub>2</sub>={data.t2SysError:F4} с,  t<sub>2</sub>={t2:F4} с\n\n" +
+                    $"ΔS<sub>1</sub>={U(data.s1SysError/1000f,"F4")} м,  S<sub>1</sub>={U(s1m,"F5")} м\n" +
+                    $"ΔS<sub>2</sub>={U(data.s2SysError/1000f,"F4")} м,  S<sub>2</sub>={U(s2m,"F5")} м\n" +
+                    $"Δt<sub>2</sub>={U(data.t2SysError,"F4")} с,  t<sub>2</sub>={U(t2,"F4")} с\n\n" +
                     "Одиниці: %";
             }
             case 'J':
@@ -344,9 +357,9 @@ public class AtwoodLabController : MonoBehaviour
                 return
                     "Теоретичне прискорення  ā (Таблиця 2)\n\n" +
                     "Формула:  ā = m<sub>1</sub>·g / (2m + m<sub>1</sub>)\n\n" +
-                    $"m  = {data.massM:F1} г = {m:F4} кг\n" +
-                    $"m<sub>1</sub> = {data.massM1:F1} г = {m1:F4} кг\n" +
-                    $"g  = {data.gravG:F2} м/с<sup>2</sup>\n\n" +
+                    $"m  = {U(data.massM,"F1")} г = {U(m,"F4")} кг\n" +
+                    $"m<sub>1</sub> = {U(data.massM1,"F1")} г = {U(m1,"F4")} кг\n" +
+                    $"g  = {U(data.gravG,"F2")} м/с<sup>2</sup>\n\n" +
                     "Одиниці: м/с<sup>2</sup>";
             }
             case 'K':
@@ -355,8 +368,8 @@ public class AtwoodLabController : MonoBehaviour
                 return
                     "Абсолютна похибка  Δā (Таблиця 2)\n\n" +
                     "Формула:  Δā = ā · ε / 100\n\n" +
-                    $"ā  = {t2[0]:F4} м/с<sup>2</sup>\n" +
-                    $"ε  = {t2[2]:F2} %\n\n" +
+                    $"ā  = {U(t2[0],"F4")} м/с<sup>2</sup>\n" +
+                    $"ε  = {U(t2[2],"F2")} %\n\n" +
                     "Одиниці: м/с<sup>2</sup>";
             }
             case 'L':
@@ -366,8 +379,8 @@ public class AtwoodLabController : MonoBehaviour
                 return
                     "Відносна похибка  ε% (Таблиця 2)\n\n" +
                     "ε = (Δm<sub>1</sub>·2m/(m<sub>1</sub>·(2m+m<sub>1</sub>)) + Δg/g + 2·Δm/(2m+m<sub>1</sub>))·100\n\n" +
-                    $"Δm={dm:F4} кг,  Δm<sub>1</sub>={dm1:F4} кг,  Δg={dg:F2} м/с<sup>2</sup>\n" +
-                    $"m={m:F4} кг,  m<sub>1</sub>={m1:F4} кг,  g={data.gravG:F2}\n\n" +
+                    $"Δm={U(dm,"F4")} кг,  Δm<sub>1</sub>={U(dm1,"F4")} кг,  Δg={U(dg,"F2")} м/с<sup>2</sup>\n" +
+                    $"m={U(m,"F4")} кг,  m<sub>1</sub>={U(m1,"F4")} кг,  g={U(data.gravG,"F2")}\n\n" +
                     "Одиниці: %";
             }
             default: return "";
@@ -380,17 +393,17 @@ public class AtwoodLabController : MonoBehaviour
         if (col == 'A')
         {
             lastRaw = Random.Range(data.s1Min, data.s1Max);
-            measRawValueText.text = $"{lastRaw:F3} мм";
+            measRawValueText.text = $"{U(lastRaw,"F3")} мм";
         }
         else if (col == 'B')
         {
             lastRaw = Random.Range(data.s2Min, data.s2Max);
-            measRawValueText.text = $"{lastRaw:F3} мм";
+            measRawValueText.text = $"{U(lastRaw,"F3")} мм";
         }
         else
         {
             lastRaw = Random.Range(data.t2Min, data.t2Max);
-            measRawValueText.text = $"{lastRaw:F6} с";
+            measRawValueText.text = $"{U(lastRaw,"F6")} с";
         }
         hasGenerated = true;
         measValueInput.text = "";
@@ -441,27 +454,27 @@ public class AtwoodLabController : MonoBehaviour
             case 'A':
             {
                 float rounded = RoundHalf(lastRaw);
-                if (Mathf.Abs(val - rounded) > 0.26f)
-                    return $"Перевірте округлення до 0.5 мм. Правильно: {rounded:F1}";
+                if (Mathf.Abs(val - rounded) > 0.05f)
+                    return $"Перевірте округлення до 0,5 мм. Правильно: {U(rounded,"F1")}";
                 return null;
             }
             case 'B':
             {
                 float rounded = RoundHalf(lastRaw);
-                if (Mathf.Abs(val - rounded) > 0.26f)
-                    return $"Перевірте округлення до 0.5 мм. Правильно: {rounded:F1}";
+                if (Mathf.Abs(val - rounded) > 0.05f)
+                    return $"Перевірте округлення до 0,5 мм. Правильно: {U(rounded,"F1")}";
                 return null;
             }
             case 'C':
             {
                 float rounded = Round4dp(lastRaw);
                 if (Mathf.Abs(val - rounded) > 0.00006f)
-                    return $"Округліть до 4 знаків після коми. Правильно: {rounded:F4}";
+                    return $"Округліть до 4 знаків після коми. Правильно: {U(rounded,"F4")}";
                 return null;
             }
             case 'D':
                 if (Mathf.Abs(val - data.massM) > 0.15f)
-                    return $"Очікується m = {data.massM:F1} г";
+                    return $"Очікується m = {U(data.massM,"F1")} г";
                 return null;
             case 'E':
             {
@@ -472,11 +485,11 @@ public class AtwoodLabController : MonoBehaviour
             }
             case 'F':
                 if (Mathf.Abs(val - data.massM1) > 0.15f)
-                    return $"Очікується m₁ = {data.massM1:F1} г";
+                    return $"Очікується m₁ = {U(data.massM1,"F1")} г";
                 return null;
             case 'G':
                 if (Mathf.Abs(val - data.gravG) > 0.015f)
-                    return $"Очікується g = {data.gravG:F2} м/с²";
+                    return $"Очікується g = {U(data.gravG,"F2")} м/с²";
                 return null;
             case 'H':
             {
@@ -537,46 +550,46 @@ public class AtwoodLabController : MonoBehaviour
 
     void FillPrefilledCells()
     {
-        string ds1 = data.s1SysError.ToString("F1");
-        string dt2 = data.t2SysError.ToString("F4");
-        string ds2 = data.s2SysError.ToString("F1");
+        string ds1 = data.s1SysError.ToString("F1", ukUA);
+        string dt2 = data.t2SysError.ToString("F4", ukUA);
+        string ds2 = data.s2SysError.ToString("F1", ukUA);
         for (int i = 0; i < 4; i++)
         {
             if (i < t1TxtDS1.Length && t1TxtDS1[i] != null) t1TxtDS1[i].text = ds1;
             if (i < t1TxtDT2.Length && t1TxtDT2[i] != null) t1TxtDT2[i].text = dt2;
         }
         if (t1TxtDS2  != null) t1TxtDS2.text  = ds2;
-        if (t2TxtDM   != null) t2TxtDM.text   = "0.05";
-        if (t2TxtDM1  != null) t2TxtDM1.text  = "0.5";
-        if (t2TxtDG   != null) t2TxtDG.text   = "0.005";
+        if (t2TxtDM   != null) t2TxtDM.text   = U(0.05f,  "F2");
+        if (t2TxtDM1  != null) t2TxtDM1.text  = U(0.5f,   "F1");
+        if (t2TxtDG   != null) t2TxtDG.text   = U(0.005f, "F3");
     }
 
     void UpdateAvgS1()
     {
         if (t1TxtAvgA == null) return;
         t1TxtAvgA.text = (valA[0] > 0 && valA[1] > 0 && valA[2] > 0)
-            ? S1Avg().ToString("F1") : "";
+            ? S1Avg().ToString("F1", ukUA) : "";
     }
 
     void UpdateAvgT2()
     {
         if (t1TxtAvgC == null) return;
         t1TxtAvgC.text = (valC[0] > 0 && valC[1] > 0 && valC[2] > 0)
-            ? T2Avg().ToString("F4") : "";
+            ? T2Avg().ToString("F4", ukUA) : "";
     }
 
     static string FormatCell(string cell, float val)
     {
         switch (cell[0])
         {
-            case 'A': case 'B':             return $"{val:F1}";
-            case 'C':                        return $"{val:F4}";
-            case 'D': case 'F':             return $"{val:F1}";
-            case 'G':                        return $"{val:F2}";
-            case 'E': case 'J':             return $"{val:F4}";
-            case 'H': case 'K':             return $"{val:F5}";
-            case 'I': case 'L':             return $"{val:F2}";
-            default:                         return val.ToString("G4");
+            case 'A': case 'B':             return U(val, "F1");
+            case 'C':                        return U(val, "F4");
+            case 'D': case 'F':             return U(val, "F1");
+            case 'G':                        return U(val, "F2");
+            case 'E': case 'J':             return U(val, "F4");
+            case 'H': case 'K':             return U(val, "F5");
+            case 'I': case 'L':             return U(val, "F2");
+            default:                         return val.ToString("G4", ukUA);
         }
     }
 
@@ -602,9 +615,9 @@ public class AtwoodLabController : MonoBehaviour
 
         conclusionText.text =
             "Лабораторна робота №2 виконана!\n\n" +
-            $"Дослідне прискорення (Табл. 1):     ā<sub>1</sub> = {a1:F4} м/с<sup>2</sup>\n" +
-            $"Теоретичне прискорення (Табл. 2):   ā<sub>2</sub> = {a2:F4} м/с<sup>2</sup>\n\n" +
-            $"Відносне розходження:  {diff:F1}%\n\n" +
+            $"Дослідне прискорення (Табл. 1):     ā<sub>1</sub> = {U(a1,"F4")} м/с<sup>2</sup>\n" +
+            $"Теоретичне прискорення (Табл. 2):   ā<sub>2</sub> = {U(a2,"F4")} м/с<sup>2</sup>\n\n" +
+            $"Відносне розходження:  {U(diff,"F1")}%\n\n" +
             (diff < 10f
                 ? "Другий закон Ньютона підтверджено в межах похибки вимірювань."
                 : "Є помітна розбіжність — перевірте точність введених значень.");
@@ -640,8 +653,18 @@ public class AtwoodLabController : MonoBehaviour
     float S1Avg() => (valA[0] + valA[1] + valA[2]) / 3f;
     float T2Avg() => (valC[0] + valC[1] + valC[2]) / 3f;
 
-    static float RoundHalf(float v) => Mathf.Round(v * 2f) / 2f;
-    static float Round4dp(float v)  => Mathf.Round(v * 10000f) / 10000f;
+    static readonly System.Globalization.CultureInfo ukUA = System.Globalization.CultureInfo.GetCultureInfo("uk-UA");
+    static string U(float v, string fmt) => v.ToString(fmt, ukUA);
+
+    static string GenerateExperimentId()
+    {
+        var now = System.DateTime.Now;
+        int rand = Random.Range(1000, 10000);
+        return $"{now.Day:D2}{now.Month:D2}-{now.Year}-{rand}";
+    }
+
+    static float RoundHalf(float v) => (float)(System.Math.Round((double)v * 2.0, System.MidpointRounding.AwayFromZero) / 2.0);
+    static float Round4dp(float v)  => (float)System.Math.Round((double)v, 4, System.MidpointRounding.AwayFromZero);
 
     // ── Cell management ───────────────────────────────────────────────────────
     void ClearAllCells()

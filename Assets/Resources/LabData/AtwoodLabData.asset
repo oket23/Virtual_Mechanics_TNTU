@@ -48,19 +48,19 @@ MonoBehaviour:
       \u0444\u043E\u0440\u043C\u0443\u043B\u0430 \u043F\u0440\u0438\u0441\u043A\u043E\u0440\u0435\u043D\u043D\u044F
       \u0432 \u043C\u0430\u0448\u0438\u043D\u0456 \u0410\u0442\u0432\u0443\u0434\u0430?"
     options:
-    - "\u0101 = m<sub>1</sub> \xB7 g / (2m + m<sub>1</sub>)"
-    - "\u0101 = S<sub>2</sub><sup>2</sup> / (2 \xB7 S<sub>1</sub> \xB7 t<sub>2</sub><sup>2</sup>)"
-    - "\u0101 = (m<sub>1</sub> + m) \xB7 g / 2"
-    - "\u0101 = 2S \xB7 g / v<sup>2</sup>"
+    - "\u0101 = m\u2081 \xB7 g / (2m + m\u2081)"
+    - "\u0101 = S\u2082\xB2 / (2 \xB7 S\u2081 \xB7 t\u2082\xB2)"
+    - "\u0101 = (m\u2081 + m) \xB7 g / 2"
+    - "\u0101 = 2S \xB7 g / v\xB2"
     correctIndex: 0
   - question: "\u042F\u043A\u0430 \u0444\u043E\u0440\u043C\u0443\u043B\u0430 \u0440\u043E\u0437\u0440\u0430\u0445\u0443\u043D\u043A\u0443
       \u043F\u0440\u0438\u0441\u043A\u043E\u0440\u0435\u043D\u043D\u044F \u0437\u0430
       \u0434\u043E\u0441\u043B\u0456\u0434\u043D\u0438\u043C\u0438 \u0434\u0430\u043D\u0438\u043C\u0438?"
     options:
-    - "\u0101 = S<sub>2</sub> \xB7 t<sub>2</sub> / (2 \xB7 S<sub>1</sub>)"
-    - "\u0101 = S<sub>2</sub><sup>2</sup> / (2 \xB7 S<sub>1</sub> \xB7 t<sub>2</sub><sup>2</sup>)"
-    - "\u0101 = 2 \xB7 S<sub>1</sub> / (S<sub>2</sub> \xB7 t<sub>2</sub><sup>2</sup>)"
-    - "\u0101 = (S<sub>2</sub> - S<sub>1</sub>) / t<sub>2</sub><sup>2</sup>"
+    - "\u0101 = S\u2082 \xB7 t\u2082 / (2 \xB7 S\u2081)"
+    - "\u0101 = S\u2082\xB2 / (2 \xB7 S\u2081 \xB7 t\u2082\xB2)"
+    - "\u0101 = 2 \xB7 S\u2081 / (S\u2082 \xB7 t\u2082\xB2)"
+    - "\u0101 = (S\u2082 - S\u2081) / t\u2082\xB2"
     correctIndex: 1
   s1Min: 118
   s1Max: 123
