@@ -339,15 +339,28 @@ public static class AtwoodLabBootstrap
     static GameObject BuildConclusionPanel(GameObject parent, AtwoodLabController ctrl)
     {
         var panel = SubPanel(parent, "ConclusionPanel");
+
         var box = Go(panel, "Box");
         box.AddComponent<LayoutElement>().flexibleHeight = 1;
         box.AddComponent<Image>().color = BG_DARK;
+        box.AddComponent<RectMask2D>();   // hard-clips any overflow to box bounds
         var bv = box.AddComponent<VerticalLayoutGroup>();
-        bv.padding = new RectOffset(16, 16, 14, 14);
-        bv.childControlWidth = bv.childControlHeight = true;
-        bv.childForceExpandWidth = true;
-        bv.childForceExpandHeight = false;
-        ctrl.conclusionText = Lbl(box, "Txt", "", 15, false, TEXT_WHITE, 0, expand: true);
+        bv.padding              = new RectOffset(16, 16, 14, 14);
+        bv.childControlWidth    = bv.childControlHeight = true;
+        bv.childForceExpandWidth  = true;
+        bv.childForceExpandHeight = true;   // stretch text to fill box height
+
+        var txtGO = Go(box, "Txt");
+        var t = txtGO.AddComponent<TextMeshProUGUI>();
+        t.text               = "";
+        t.fontSize           = 14;
+        t.fontStyle          = FontStyles.Normal;
+        t.alignment          = TextAlignmentOptions.TopLeft;
+        t.color              = TEXT_WHITE;
+        t.enableWordWrapping = true;
+        t.overflowMode       = TextOverflowModes.Truncate;
+        ctrl.conclusionText  = t;
+
         Space(panel, 10);
         ctrl.conclusionCloseBtn = BtnH(panel, "BtnClose",
             "Завершити лабораторну  ✓", BTN_GREEN, 46, 15);
@@ -690,11 +703,12 @@ static GameObject VPanel(GameObject parent, string name, float flexW, Color? bg 
         if (expand) le.flexibleHeight = 1;
         else        le.preferredHeight = h;
         var t = go.AddComponent<TextMeshProUGUI>();
-        t.text      = text;
-        t.fontSize  = size;
-        t.fontStyle = bold ? FontStyles.Bold : FontStyles.Normal;
-        t.alignment = TextAlignmentOptions.TopLeft;
-        t.color     = color;
+        t.text               = text;
+        t.fontSize           = size;
+        t.fontStyle          = bold ? FontStyles.Bold : FontStyles.Normal;
+        t.alignment          = TextAlignmentOptions.TopLeft;
+        t.color              = color;
+        t.enableWordWrapping = true;
         return t;
     }
 

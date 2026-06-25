@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -461,9 +462,14 @@ public class AtwoodLabController : MonoBehaviour
         ToPhase(Phase.Conclusion);
         phaseTitleText.text = "Інструкція до звіту";
         hintBarText.text    = "Вимірювання завершені — зробіть скріншот таблиць";
+        StartCoroutine(ApplyConclusionText());
+    }
 
-        // Force layout recalculation so TMP_Text gets correct width before wrapping text
-        Canvas.ForceUpdateCanvases();
+    IEnumerator ApplyConclusionText()
+    {
+        // Wait one frame so the layout system establishes container widths
+        // before TMP_Text renders — otherwise word-wrap has no width to work with
+        yield return null;
 
         var sb = new System.Text.StringBuilder();
         sb.AppendLine("Вимірювання завершено!\n");
@@ -507,15 +513,15 @@ public class AtwoodLabController : MonoBehaviour
         for (int i = 0; i < 3; i++) SetCell(t1BgA[i], t1TxtA[i], CELL_NORMAL, $"A{i + 1}");
         for (int i = 0; i < 3; i++) SetCell(t1BgB[i], t1TxtB[i], CELL_NORMAL, $"B{i + 1}");
         for (int i = 0; i < 3; i++) SetCell(t1BgC[i], t1TxtC[i], CELL_NORMAL, $"C{i + 1}");
-        SetCell(t1BgE,  t1TxtE,  CELL_NORMAL, "E1");
-        SetCell(t1BgH,  t1TxtH,  CELL_NORMAL, "H1");
-        SetCell(t1BgI,  t1TxtI,  CELL_NORMAL, "I1");
+        SetCell(t1BgE,  t1TxtE,  CELL_NORMAL, "");
+        SetCell(t1BgH,  t1TxtH,  CELL_NORMAL, "");
+        SetCell(t1BgI,  t1TxtI,  CELL_NORMAL, "");
         SetCell(t2BgD,  t2TxtD,  CELL_NORMAL, "D1");
         SetCell(t2BgF,  t2TxtF,  CELL_NORMAL, "F1");
         SetCell(t2BgG,  t2TxtG,  CELL_NORMAL, "G1");
-        SetCell(t2BgJ,  t2TxtJ,  CELL_NORMAL, "J1");
-        SetCell(t2BgK,  t2TxtK,  CELL_NORMAL, "K1");
-        SetCell(t2BgL,  t2TxtL,  CELL_NORMAL, "L1");
+        SetCell(t2BgJ,  t2TxtJ,  CELL_NORMAL, "");
+        SetCell(t2BgK,  t2TxtK,  CELL_NORMAL, "");
+        SetCell(t2BgL,  t2TxtL,  CELL_NORMAL, "");
         if (t1TxtAvgA != null) t1TxtAvgA.text = "";
         if (t1TxtAvgB != null) t1TxtAvgB.text = "";
         if (t1TxtAvgC != null) t1TxtAvgC.text = "";
