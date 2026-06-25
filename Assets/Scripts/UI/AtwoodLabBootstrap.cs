@@ -163,38 +163,35 @@ public static class AtwoodLabBootstrap
     {
         var left = VPanel(parent, "LeftPanel", 18f, BG_PANEL);
 
-        Lbl(left, "Title",  "МАШИНА АТВУДА", 18, true,  TEXT_ACCENT, 22);
+        Lbl(left, "Title",  "МАШИНА АТВУДА",        16, true,  TEXT_ACCENT, 22);
         Divider(left);
         Space(left, 6);
 
-        var imgGO = Go(left, "SchemeImage");
-        imgGO.AddComponent<LayoutElement>().flexibleHeight = 1f;
+        // Контейнер для картинки. Він має flexibleHeight = 1f, тому автоматично 
+        // розтягнеться на весь вільний простір, який з'явився після видалення формул
+        var imgContainer = Go(left, "SchemeImageContainer");
+        imgContainer.AddComponent<LayoutElement>().flexibleHeight = 1f;
+
+        var imgGO = Go(imgContainer, "SchemeImage");
         var rawImg = imgGO.AddComponent<RawImage>();
         rawImg.color = Color.white;
+        
+        // Зберігає пропорції нової, більш детальної картинки
+        var fitter = imgGO.AddComponent<AspectRatioFitter>();
+        fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+        
         ctrl.schemeRawImage = rawImg;
 
+        // Блок "ФОРМУЛИ" видалено. Одразу йдемо до похибок.
+        Space(left, 6);
         Divider(left);
         Space(left, 6);
-        Lbl(left, "FmLbl", "ФОРМУЛИ", 14, true, TEXT_ACCENT, 18);
-        Space(left, 4);
-        Lbl(left, "Fm1", "Дослідне:\na = S<sub>2</sub><sup>2</sup> / (2·S<sub>1сер</sub>·t<sub>2сер</sub><sup>2</sup>)", 18, false, TEXT_WHITE, 46);
-        Space(left, 6);
-        Lbl(left, "Fm2", "Теоретичне:\na = m<sub>1</sub>·g / (2m + m<sub>1</sub>)",    18, false, TEXT_WHITE, 46);
-        Divider(left);
-        Space(left, 6);
+        
         Lbl(left, "ErrLbl", "СИСТЕМ. ПОХИБКИ",     14, true,  TEXT_ACCENT, 16);
         Space(left, 4);
-        Lbl(left, "ErrS",  "ΔS = 0.5 мм",       14, false, TEXT_DIM,    18);
-        Lbl(left, "ErrT",  "Δt = 0.0005 с",    14, false, TEXT_DIM,    18);
-        Lbl(left, "ErrM",  "Δm = 0.1 г",       14, false, TEXT_DIM,    18);
-        Divider(left);
-        Space(left, 6);
-        Lbl(left, "LinksLbl", "ПОСИЛАННЯ", 14, true, TEXT_ACCENT, 16);
-        Space(left, 4);
-        ctrl.linkCpslBtn = BtnH(left, "BtnCpsl", "Лабораторія кіберфізичних систем  >>", BTN_TEAL, 38, 12);
-        Space(left, 4);
-        ctrl.linkBookBtn = BtnH(left, "BtnBook", "Лабораторний практикум  >>",            BTN_TEAL, 38, 12);
-        Space(left, 6);
+        Lbl(left, "ErrS",  "DS = 0.5 мм",          14, false, TEXT_DIM,    18);
+        Lbl(left, "ErrT",  "Dt = 0.0005 с",         14, false, TEXT_DIM,    18);
+        Lbl(left, "ErrM",  "Dm = 0.1 г",            14, false, TEXT_DIM,    18);
     }
 
     // ── Center panel ──────────────────────────────────────────────────────────
@@ -363,7 +360,7 @@ public static class AtwoodLabBootstrap
 
         Space(panel, 10);
         ctrl.conclusionCloseBtn = BtnH(panel, "BtnClose",
-            "Завершити лабораторну  ✓", BTN_GREEN, 46, 15);
+            "Завершити лабораторну", BTN_GREEN, 46, 15);
         return panel;
     }
 

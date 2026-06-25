@@ -155,8 +155,17 @@ public class AtwoodLabController : MonoBehaviour
         hasGenerated  = false;
         activeCellName = "";
 
-        if (schemeRawImage != null)
+        if (schemeRawImage != null && data.schemeImage != null)
+        {
             schemeRawImage.texture = data.schemeImage;
+            
+            // Вираховуємо пропорції картинки (ширина поділена на висоту)
+            var fitter = schemeRawImage.GetComponent<AspectRatioFitter>();
+            if (fitter != null)
+            {
+                fitter.aspectRatio = (float)data.schemeImage.width / data.schemeImage.height;
+            }
+        }
 
         BuildSteps();
         ClearAllCells();
