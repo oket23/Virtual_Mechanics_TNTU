@@ -198,6 +198,7 @@ public static class AtwoodLabBootstrap
     static void BuildCenter(GameObject parent, AtwoodLabController ctrl)
     {
         var center = VPanel(parent, "CenterPanel", 22f, BG_PANEL);
+        center.AddComponent<RectMask2D>();  // hard-clips any TMP overflow to panel bounds
 
         // Phase title
         var titleGO = Go(center, "PhaseTitle");
@@ -237,8 +238,12 @@ public static class AtwoodLabBootstrap
         }
         ctrl.quizAnswerInput = inp;
 
-        Space(panel, 10);
-        ctrl.quizNextBtn = BtnH(panel, "BtnNext", "Далі  >>", BTN_BLUE, 42, 14);
+        Space(panel, 8);
+        ctrl.quizFeedbackText = Lbl(panel, "FeedbackTxt", "", 13, false,
+            new Color(0.45f, 0.90f, 0.55f, 1f), 80);
+
+        Space(panel, 8);
+        ctrl.quizNextBtn = BtnH(panel, "BtnNext", "Перевірити  >>", BTN_BLUE, 42, 14);
         ctrl.quizNextBtn.interactable = false;
         ctrl.quizNextLabel = ctrl.quizNextBtn.GetComponentInChildren<TMP_Text>();
 

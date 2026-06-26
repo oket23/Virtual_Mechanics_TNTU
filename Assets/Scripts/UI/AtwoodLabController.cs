@@ -20,6 +20,7 @@ public class AtwoodLabController : MonoBehaviour
     // ── Quiz ──────────────────────────────────────────────────────────────────
     public TMP_Text       quizQText;
     public TMP_InputField quizAnswerInput;
+    public TMP_Text       quizFeedbackText;
     public Button         quizNextBtn;
     public TMP_Text       quizNextLabel;
 
@@ -29,6 +30,14 @@ public class AtwoodLabController : MonoBehaviour
         "В яких одиницях вимірюють прискорення в системі СІ?",
         "Сформулюйте другий закон Ньютона.",
         "Чому дорівнює систематична похибка міліметрової лінійки?"
+    };
+
+    static readonly string[] ANSWERS = new[]
+    {
+        "Прискорення — векторна фізична величина, що дорівнює відношенню зміни швидкості до часу, за який ця зміна відбулася: a = Δv/Δt.",
+        "м/с² (метр на секунду в квадраті).",
+        "Прискорення тіла прямо пропорційне рівнодійній прикладених до нього сил і обернено пропорційне масі тіла: a = F/m.",
+        "0,5 мм (половина ціни найменшого поділу шкали лінійки)."
     };
 
     // ── Measure / enter panel ─────────────────────────────────────────────────
@@ -113,6 +122,7 @@ public class AtwoodLabController : MonoBehaviour
     enum Phase { Quiz, Measure, Conclusion }
     Phase    phase;
     int      quizSub;
+    bool     quizShowingFeedback;
     string[] savedAnswers = new string[4];
 
     Step[] allSteps;
@@ -236,25 +246,41 @@ public class AtwoodLabController : MonoBehaviour
     // ── Quiz ──────────────────────────────────────────────────────────────────
     void ShowQuiz()
     {
-        phaseTitleText.text      = $"Опитування  {quizSub + 1} / {QUESTIONS.Length}";
-        hintBarText.text         = "Введіть відповідь у текстове поле";
-        quizQText.text           = QUESTIONS[quizSub];
-        quizAnswerInput.text     = "";
-        bool last                = quizSub >= QUESTIONS.Length - 1;
-        quizNextLabel.text       = last ? "Розпочати лабораторну  >>" : "Далі  >>";
+        phaseTitleText.text          = $"Опитування  {quizSub + 1} / {QUESTIONS.Length}";
+        hintBarText.text             = "Введіть відповідь у текстове поле";
+        quizQText.text               = QUESTIONS[quizSub];
+        quizAnswerInput.text         = "";
+        quizAnswerInput.interactable = true;
+        if (quizFeedbackText) quizFeedbackText.text = "";
+        quizShowingFeedback          = false;
+        quizNextLabel.text           = "Перевірити  >>";
         RefreshQuizBtn();
         quizAnswerInput.Select();
     }
 
     void RefreshQuizBtn() =>
-        quizNextBtn.interactable = !string.IsNullOrWhiteSpace(quizAnswerInput.text);
+        quizNextBtn.interactable = quizShowingFeedback ||
+                                   !string.IsNullOrWhiteSpace(quizAnswerInput.text);
 
     void AdvanceQuiz()
     {
-        savedAnswers[quizSub] = quizAnswerInput.text.Trim();
-        quizSub++;
-        if (quizSub >= QUESTIONS.Length) BeginMeasurements();
-        else ToPhase(Phase.Quiz);
+        if (!quizShowingFeedback)
+        {
+            savedAnswers[quizSub]        = quizAnswerInput.text.Trim();
+            quizAnswerInput.interactable = false;
+            if (quizFeedbackText)
+                quizFeedbackText.text = $"Правильна відповідь:\n{ANSWERS[quizSub]}";
+            bool last          = quizSub >= QUESTIONS.Length - 1;
+            quizNextLabel.text = last ? "Розпочати лабораторну  >>" : "Далі  >>";
+            quizNextBtn.interactable  = true;
+            quizShowingFeedback       = true;
+        }
+        else
+        {
+            quizSub++;
+            if (quizSub >= QUESTIONS.Length) BeginMeasurements();
+            else ToPhase(Phase.Quiz);
+        }
     }
 
     // ── Measure step ──────────────────────────────────────────────────────────
@@ -292,8 +318,6 @@ public class AtwoodLabController : MonoBehaviour
                     "Одиниці запису: мм";
             case 'C':
                 return
-                    $"Вимірювання часу t<sub>2</sub>\n\n" +
-                    $"Діапазон: {U(data.t2Min,"F4")} – {U(data.t2Max,"F4")} с\n" +
                     $"Систематична похибка:  Δt<sub>2</sub> = {U(data.t2SysError,"F4")} с\n" +
                     "Округліть до 4 знаків після коми.\n" +
                     "Одиниці запису: с";
