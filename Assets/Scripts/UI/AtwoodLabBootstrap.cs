@@ -182,7 +182,6 @@ public static class AtwoodLabBootstrap
         
         ctrl.schemeRawImage = rawImg;
 
-        // Блок "ФОРМУЛИ" видалено. Одразу йдемо до похибок.
         Space(left, 6);
         Divider(left);
         Space(left, 6);
