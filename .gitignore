@@ -58,3 +58,7 @@ Desktop.ini
 *.aab
 *.unitypackage
 *.app
+*.zip
+.vsconfig
+web-build
+/web-build

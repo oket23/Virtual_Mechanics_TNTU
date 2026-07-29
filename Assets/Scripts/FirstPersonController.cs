@@ -15,8 +15,10 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+        Screen.fullScreen = true;
+
         characterController = GetComponent<CharacterController>();
-        
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -38,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            moveDirection.y = -0.5f; 
+            moveDirection.y = -0.5f;
         }
 
         characterController.Move(moveDirection * Time.deltaTime);
